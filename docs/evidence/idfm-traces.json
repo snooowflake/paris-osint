@@ -1,0 +1,210 @@
+{
+  "id": "idfm-traces",
+  "producer": "Île-de-France Mobilités",
+  "source": "https://data.iledefrance-mobilites.fr/explore/dataset/traces-du-reseau-ferre-idf/",
+  "license": "Licence Ouverte v2.0 (Etalab)",
+  "testedAt": "2026-10-05T01:20:25.389Z",
+  "rawCount": 1673,
+  "retainedCount": 472,
+  "outside": 1192,
+  "missingGeometry": 0,
+  "schema": [
+    {
+      "name": "geo_point_2d",
+      "description": "Point géographique  ",
+      "annotations": {},
+      "label": "Geo Point",
+      "type": "geo_point_2d"
+    },
+    {
+      "name": "geo_shape",
+      "description": "Shape d'un tracé d'une ligne",
+      "annotations": {},
+      "label": "Geo Shape",
+      "type": "geo_shape"
+    },
+    {
+      "name": "objectid_1",
+      "description": null,
+      "annotations": {},
+      "label": "OBJECTID_1",
+      "type": "int"
+    },
+    {
+      "name": "idrefliga",
+      "description": "Identifiant unique de la ligne administrative issu du référentiel CodifLigne",
+      "annotations": {
+        "facet": true
+      },
+      "label": "idrefliga",
+      "type": "text"
+    },
+    {
+      "name": "idrefligc",
+      "description": "Identifiant unique de la ligne commerciale issue du référentiel CodifLigne",
+      "annotations": {
+        "facet": true
+      },
+      "label": "idrefligc",
+      "type": "text"
+    },
+    {
+      "name": "res_com",
+      "description": "Nom commercial du réseau décrit par le tronçon de ligne.\nValeurs: M1 à M14 / RER A à E / LIGNE H à U / FUNICULAIRE MONTMARTRE / CDGVAL / ORLYVAL / T1 à T8 / TER",
+      "annotations": {
+        "facet": true,
+        "sortable": true
+      },
+      "label": "res_com",
+      "type": "text"
+    },
+    {
+      "name": "reseau",
+      "description": "Nom du réseau ferré (au sens SNCF);\nValeurs: Métro / TRAMWAY / RER A / RER B / RER C / RER D / RER E / SNCF NORD / SNCF SAINT-LAZARE / PARIS SUD EST / PARIS RIVE GAUCHE / PARIS NORD / PARIS EST / LA VERRIERE-LA DEFENSE / ORLYVAL / CDGVAL / FUNICULAIRE MONTMARTRE / GRANDES LIGNES",
+      "annotations": {},
+      "label": "reseau",
+      "type": "text"
+    },
+    {
+      "name": "mode",
+      "description": "Nom du mode.\nValeurs: Metro / Navette / RER / Train / Tramway",
+      "annotations": {
+        "facet": true,
+        "disjunctive": true
+      },
+      "label": "mode",
+      "type": "text"
+    },
+    {
+      "name": "train",
+      "description": "Indique si l'objet décrit est une ligne ferrée (mode Train).\nValeurs: 1 [=oui] / 0 [=non]",
+      "annotations": {},
+      "label": "train",
+      "type": "int"
+    },
+    {
+      "name": "rer",
+      "description": "Indique si l'objet décrit est une ligne ferrée (mode RER).\nValeurs: 1 [=oui] / 0 [=non]",
+      "annotations": {},
+      "label": "rer",
+      "type": "int"
+    },
+    {
+      "name": "metro",
+      "description": "Indique si l'objet décrit est une ligne de métro.\nValeurs: 1 [=oui] / 0 [=non]",
+      "annotations": {},
+      "label": "metro",
+      "type": "int"
+    },
+    {
+      "name": "tramway",
+      "description": "Indique si l'objet décrit est une ligne de tramway.\nValeurs: 1 [=oui] / 0 [=non]",
+      "annotations": {},
+      "label": "tramway",
+      "type": "int"
+    },
+    {
+      "name": "val",
+      "description": "Indique si l'objet décrit est une ligne dite navette, à savoir funiculaire ou val.\nValeurs: 1 [=oui] / 0 [=non]",
+      "annotations": {},
+      "label": "val",
+      "type": "int"
+    },
+    {
+      "name": "exploitant",
+      "description": "Nom de l'exploitant de la ligne",
+      "annotations": {},
+      "label": "exploitant",
+      "type": "text"
+    },
+    {
+      "name": "date_mes",
+      "description": "Date de mise en service du tronçon.",
+      "annotations": {
+        "facet": true
+      },
+      "label": "date_mes",
+      "type": "datetime"
+    },
+    {
+      "name": "idf",
+      "description": "Indique si le tronçon de ligne se situe en Ile de France.\nValeurs: 1 [=oui] / 0 [=non]",
+      "annotations": {},
+      "label": "idf",
+      "type": "int"
+    },
+    {
+      "name": "extcode",
+      "description": "Code Externe de ligne (utilisé dans les fichiers GTFS at API)",
+      "annotations": {},
+      "label": "extcode",
+      "type": "text"
+    },
+    {
+      "name": "indice_lig",
+      "description": "Nom de l'indice de ligne (selon le nom commercial de la ligne).\nValeurs: 1 2 3 3b 4 5 6 7 7b 8 9 10 11 12 13 14 A B C D E H J K L N P R U CDG FUN GL ORL TER. (Attention : les indices 1-2-3-4-5-6-7-8 concernent le métro ET le tramway.)",
+      "annotations": {},
+      "label": "indice_lig",
+      "type": "text"
+    },
+    {
+      "name": "shape_leng",
+      "description": "Longueur du troncon dans le SIG",
+      "annotations": {},
+      "label": "SHAPE_Leng",
+      "type": "double"
+    },
+    {
+      "name": "colourweb_hexa",
+      "description": "Couleur de la ligne exprimée en web hexa",
+      "annotations": {},
+      "label": "ColourWeb_hexa",
+      "type": "text"
+    },
+    {
+      "name": "colourprint_cmjn",
+      "description": "Couleur de la ligne exprimée en CMJN",
+      "annotations": {},
+      "label": "ColourPrint_CMJN",
+      "type": "text"
+    },
+    {
+      "name": "picto",
+      "description": "Picto de ligne initial",
+      "annotations": {
+        "facetsort": "-count"
+      },
+      "label": "picto_initial",
+      "type": "file"
+    },
+    {
+      "name": "picto_final",
+      "description": "Picto de ligne final",
+      "annotations": {},
+      "label": "picto_final",
+      "type": "text"
+    }
+  ],
+  "sample": [
+    {
+      "id": "300",
+      "geometryType": "MultiLineString",
+      "observedAt": null,
+      "publishedAt": "2026-07-16T14:43:15.000Z",
+      "validFrom": null,
+      "validTo": null,
+      "source": "idfm-traces"
+    },
+    {
+      "id": "302",
+      "geometryType": "MultiLineString",
+      "observedAt": null,
+      "publishedAt": "2026-07-16T14:43:15.000Z",
+      "validFrom": null,
+      "validTo": null,
+      "source": "idfm-traces"
+    }
+  ],
+  "currentParisCount": 472,
+  "state": "available"
+}

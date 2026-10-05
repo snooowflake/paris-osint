@@ -1,0 +1,111 @@
+{
+  "id": "travaux",
+  "producer": "Ville de Paris",
+  "source": "https://opendata.paris.fr/explore/dataset/chantiers-perturbants/",
+  "license": "Open Database License (ODbL)",
+  "testedAt": "2026-10-05T00:54:31.856Z",
+  "rawCount": 124,
+  "retainedCount": 122,
+  "outside": 1,
+  "missingGeometry": 1,
+  "schema": [
+    {
+      "name": "identifiant",
+      "type": "text"
+    },
+    {
+      "name": "identifiant_ctv",
+      "type": "text"
+    },
+    {
+      "name": "cp_arrondissement",
+      "type": "text"
+    },
+    {
+      "name": "numero_stv",
+      "type": "int"
+    },
+    {
+      "name": "typologie",
+      "type": "int"
+    },
+    {
+      "name": "maitre_ouvrage",
+      "type": "text"
+    },
+    {
+      "name": "objet",
+      "type": "text"
+    },
+    {
+      "name": "description",
+      "type": "text"
+    },
+    {
+      "name": "voie",
+      "type": "text"
+    },
+    {
+      "name": "precision_localisation",
+      "type": "text"
+    },
+    {
+      "name": "date_debut",
+      "type": "date"
+    },
+    {
+      "name": "date_fin",
+      "type": "date"
+    },
+    {
+      "name": "impact_circulation",
+      "type": "text"
+    },
+    {
+      "name": "impact_circulation_detail",
+      "type": "text"
+    },
+    {
+      "name": "niveau_perturbation",
+      "type": "int"
+    },
+    {
+      "name": "statut",
+      "type": "int"
+    },
+    {
+      "name": "url_lic",
+      "type": "text"
+    },
+    {
+      "name": "geo_shape",
+      "type": "geo_shape"
+    },
+    {
+      "name": "geo_point_2d",
+      "type": "geo_point_2d"
+    }
+  ],
+  "sample": [
+    {
+      "id": "CP002371",
+      "geometryType": "MultiPolygon",
+      "observedAt": null,
+      "publishedAt": "2026-10-04T08:25:08.000Z",
+      "validFrom": "2022-07-17T22:00:00.000Z",
+      "validTo": "2026-12-31T23:00:00.000Z",
+      "source": "travaux"
+    },
+    {
+      "id": "CP003047",
+      "geometryType": "MultiPolygon",
+      "observedAt": null,
+      "publishedAt": "2026-10-04T08:25:08.000Z",
+      "validFrom": "2026-05-17T22:00:00.000Z",
+      "validTo": "2026-10-29T23:00:00.000Z",
+      "source": "travaux"
+    }
+  ],
+  "currentParisCount": 64,
+  "state": "available"
+}

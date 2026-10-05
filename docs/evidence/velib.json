@@ -1,0 +1,34 @@
+{
+  "id": "velib",
+  "producer": "Smovengo / Vélib Métropole",
+  "source": "https://www.velib-metropole.fr/fr/donnees-open-data-gbfs-du-service-velib-metropole",
+  "license": "Licence Ouverte Etalab",
+  "testedAt": "2026-10-05T02:55:18.096Z",
+  "rawCount": 1519,
+  "retainedCount": 995,
+  "outside": 524,
+  "missingGeometry": 0,
+  "schema": "GBFS station_information + station_status ; stationCode, last_reported, TTL",
+  "sample": [
+    {
+      "id": "16107",
+      "geometryType": "Point",
+      "observedAt": "2026-10-05T02:22:37.000Z",
+      "publishedAt": "2026-10-05T02:54:39.000Z",
+      "validFrom": null,
+      "validTo": null,
+      "source": "velib"
+    },
+    {
+      "id": "9020",
+      "geometryType": "Point",
+      "observedAt": "2026-10-05T02:20:48.000Z",
+      "publishedAt": "2026-10-05T02:54:39.000Z",
+      "validFrom": null,
+      "validTo": null,
+      "source": "velib"
+    }
+  ],
+  "currentParisCount": 985,
+  "state": "available"
+}

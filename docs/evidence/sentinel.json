@@ -1,0 +1,25 @@
+{
+  "id": "sentinel",
+  "producer": "Copernicus / ESA",
+  "source": "https://documentation.dataspace.copernicus.eu/APIs/STAC.html",
+  "license": "Copernicus Sentinel Data Legal Notice",
+  "testedAt": "2026-10-05T00:54:35.708Z",
+  "rawCount": 1,
+  "retainedCount": 1,
+  "outside": 0,
+  "missingGeometry": 0,
+  "schema": "STAC sentinel-2-l2a ; datetime acquisition, published, gsd, eo:cloud_cover pour scène entière",
+  "sample": [
+    {
+      "id": "S2B_MSIL2A_20261004T105909_N0513_R094_T31UDQ_20261004T133358",
+      "geometryType": "MultiPolygon",
+      "observedAt": "2026-10-04T10:59:09.024Z",
+      "publishedAt": "2026-10-04T14:19:17.891Z",
+      "validFrom": null,
+      "validTo": null,
+      "source": "sentinel"
+    }
+  ],
+  "currentParisCount": 1,
+  "state": "available"
+}

@@ -1,0 +1,106 @@
+{
+  "id": "meteo-vigilance",
+  "producer": "Météo-France / Région Île-de-France",
+  "source": "https://data.iledefrance.fr/explore/dataset/meteo-vigilance-niveau-departemental-idf/",
+  "license": "Licence Ouverte v2.0 (Etalab)",
+  "testedAt": "2026-10-05T02:57:18.694Z",
+  "rawCount": 8,
+  "retainedCount": 8,
+  "outside": 0,
+  "missingGeometry": 0,
+  "schema": [
+    {
+      "name": "domain_id",
+      "description": "Identifiant du domaine couvert par le bulletin : \n 'FRA' = domaine France; 'ZDF_XXX' = domaine zone de défense ; 'dd' = domaine départemental",
+      "annotations": {
+        "sortable": true
+      },
+      "label": "ID Domaine",
+      "type": "text"
+    },
+    {
+      "name": "echeance",
+      "description": "Échéance à J ou J+1",
+      "annotations": {
+        "sortable": true
+      },
+      "label": "Échéance",
+      "type": "text"
+    },
+    {
+      "name": "phenomenon_id",
+      "description": "Identifiant du phénomène \n 1 : vent \n 2 : pluie \n 3 : orages \n 4 : crues \n 5 : neige / verglas \n 6 : canicule \n 7 : grand froid \n 8 : avalanches \n 9 : vagues submersion",
+      "label": "ID Phénomène",
+      "type": "int",
+      "annotations": {}
+    },
+    {
+      "name": "phenomenon",
+      "description": "Type de phénomène",
+      "annotations": {
+        "sortable": true
+      },
+      "label": "Phénomène",
+      "type": "text"
+    },
+    {
+      "name": "color_id",
+      "description": "Code couleur du niveau de danger météorologique (ou niveau de vigilance) pour ce phénomène",
+      "label": "Code couleur danger",
+      "type": "int",
+      "annotations": {}
+    },
+    {
+      "name": "color",
+      "description": "Couleur du niveau de danger météorologique (ou niveau de vigilance)",
+      "annotations": {
+        "sortable": true
+      },
+      "label": "Couleur danger",
+      "type": "text"
+    },
+    {
+      "name": "begin_time",
+      "description": "Date/heure de début de l'épisode",
+      "label": "Date début",
+      "type": "datetime",
+      "annotations": {}
+    },
+    {
+      "name": "end_time",
+      "description": "Date/heure de fin de l'épisode",
+      "label": "Date fin",
+      "type": "datetime",
+      "annotations": {}
+    },
+    {
+      "name": "product_datetime",
+      "description": "Date d'émission de la donnée",
+      "label": "Date d'émission",
+      "type": "datetime",
+      "annotations": {}
+    }
+  ],
+  "sample": [
+    {
+      "id": "5:J1",
+      "geometryType": null,
+      "observedAt": null,
+      "publishedAt": "2026-10-04T14:00:00.000Z",
+      "validFrom": "2026-10-04T22:00:00.000Z",
+      "validTo": "2026-10-05T22:00:00.000Z",
+      "source": "meteo-vigilance"
+    },
+    {
+      "id": "2:J1",
+      "geometryType": null,
+      "observedAt": null,
+      "publishedAt": "2026-10-04T14:00:00.000Z",
+      "validFrom": "2026-10-04T22:00:00.000Z",
+      "validTo": "2026-10-05T22:00:00.000Z",
+      "source": "meteo-vigilance"
+    }
+  ],
+  "currentParisCount": 4,
+  "state": "available"
+}

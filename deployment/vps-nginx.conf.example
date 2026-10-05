@@ -1,0 +1,23 @@
+# À adapter sur le VPS public existant, après attribution d'un domaine,
+# vérification du VPN et des accès. Ne pas appliquer sur la VM applicative.
+server {
+    listen 443 ssl;
+    server_name APP_FQDN;
+    ssl_certificate CERTIFICATE_PATH;
+    ssl_certificate_key PRIVATE_KEY_PATH;
+    client_max_body_size 64k;
+    add_header X-Content-Type-Options nosniff always;
+    add_header Referrer-Policy same-origin always;
+    location / {
+        proxy_pass http://PRIVATE_SERVICE_HOST:PRIVATE_SERVICE_PORT;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_http_version 1.1;
+        proxy_connect_timeout 5s;
+        proxy_read_timeout 30s;
+    }
+}
+# Définir APP_ORIGIN=https://APP_FQDN sur le serveur applicatif.
+# L'authentification applicative reste obligatoire.
+# Aucun autre site, routage, pare-feu ou configuration SSH à modifier.

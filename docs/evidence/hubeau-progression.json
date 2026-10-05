@@ -1,0 +1,23 @@
+{
+  "source": "hubeau",
+  "testedAt": "2026-10-05T02:41:59.992Z",
+  "nature": "Comparaison de deux reponses officielles reellement acquises; aucune observation intermediaire deduite",
+  "comparisons": [
+    {
+      "id": "F700000102:H",
+      "previousObservation": "2026-10-05T01:00:00.000Z",
+      "currentObservation": "2026-10-05T02:20:00.000Z",
+      "previousCollection": "2026-10-05T01:20:30.080Z",
+      "currentCollection": "2026-10-05T02:38:55.262Z",
+      "progressed": true
+    },
+    {
+      "id": "F700000103:H",
+      "previousObservation": "2026-10-05T01:00:00.000Z",
+      "currentObservation": "2026-10-05T02:20:00.000Z",
+      "previousCollection": "2026-10-05T01:20:30.080Z",
+      "currentCollection": "2026-10-05T02:38:55.262Z",
+      "progressed": true
+    }
+  ]
+}

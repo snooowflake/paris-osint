@@ -1,0 +1,183 @@
+{
+  "id": "idfm-arrets",
+  "producer": "Île-de-France Mobilités",
+  "source": "https://data.iledefrance-mobilites.fr/explore/dataset/arrets/",
+  "license": "Licence Ouverte v2.0 (Etalab)",
+  "testedAt": "2026-10-05T01:20:28.543Z",
+  "rawCount": 3858,
+  "retainedCount": 3857,
+  "outside": 1,
+  "missingGeometry": 0,
+  "schema": [
+    {
+      "name": "arrid",
+      "description": "Identifiant Réferentiel de l'objet",
+      "annotations": {
+        "facetsort": "-count",
+        "sortable": true
+      },
+      "label": "ArRId",
+      "type": "text"
+    },
+    {
+      "name": "arrversion",
+      "description": "Numéro de version de l’objet ",
+      "annotations": {
+        "sortable": true
+      },
+      "label": "ArRVersion",
+      "type": "text"
+    },
+    {
+      "name": "arrcreated",
+      "description": "Date de création de l’objet",
+      "annotations": {
+        "facetsort": "-count",
+        "timeserie_precision": "minute"
+      },
+      "label": "ArRCreated",
+      "type": "datetime"
+    },
+    {
+      "name": "arrchanged",
+      "description": "Date de la dernière modification de l’objet",
+      "annotations": {},
+      "label": "ArRChanged",
+      "type": "datetime"
+    },
+    {
+      "name": "arrname",
+      "description": "Nom de la zone d'embarquement\n",
+      "annotations": {
+        "sortable": true
+      },
+      "label": "ArRName",
+      "type": "text"
+    },
+    {
+      "name": "arrtype",
+      "description": "Type d’arrêt",
+      "annotations": {
+        "facet": true,
+        "facetsort": "alphanum",
+        "sortable": true
+      },
+      "label": "ArRType",
+      "type": "text"
+    },
+    {
+      "name": "arrxepsg2154",
+      "description": "Coordonnées X en Lambert 93",
+      "annotations": {
+        "facetsort": "-count"
+      },
+      "label": "ArRXEpsg2154",
+      "type": "int"
+    },
+    {
+      "name": "arryepsg2154",
+      "description": "Coordonnées Y en Lambert 93",
+      "annotations": {
+        "facetsort": "-count"
+      },
+      "label": "ArRYEpsg2154",
+      "type": "int"
+    },
+    {
+      "name": "arrtown",
+      "description": "Libellé de la commune",
+      "annotations": {
+        "facet": true,
+        "facetsort": "-count",
+        "sortable": true
+      },
+      "label": "ArRTown",
+      "type": "text"
+    },
+    {
+      "name": "arrpostalregion",
+      "description": "Code insee de la commune",
+      "annotations": {
+        "sortable": true
+      },
+      "label": "ArRPostalRegion",
+      "type": "text"
+    },
+    {
+      "name": "arraccessibility",
+      "description": "Accessibilité UFR",
+      "annotations": {
+        "facet": true,
+        "sortable": true
+      },
+      "label": "ArRAccessibility",
+      "type": "text"
+    },
+    {
+      "name": "arraudiblesignals",
+      "description": "Présence d’informations sonores ",
+      "annotations": {
+        "sortable": true
+      },
+      "label": "ArRAudibleSignals",
+      "type": "text"
+    },
+    {
+      "name": "arrvisualsigns",
+      "description": "Présence d’informations dynamiques ",
+      "annotations": {
+        "sortable": true
+      },
+      "label": "ArRVisualSigns",
+      "type": "text"
+    },
+    {
+      "name": "arrfarezone",
+      "description": "Zones tarifaires",
+      "annotations": {
+        "facetsort": "-count",
+        "sortable": true
+      },
+      "label": "ArRFareZone",
+      "type": "text"
+    },
+    {
+      "name": "zdaid",
+      "description": "Identifiant de la zone d'arrêt parente  ",
+      "annotations": {
+        "sortable": true
+      },
+      "label": "ZdAId",
+      "type": "text"
+    },
+    {
+      "name": "arrgeopoint",
+      "description": null,
+      "annotations": {},
+      "label": "ArRGeopoint",
+      "type": "geo_point_2d"
+    }
+  ],
+  "sample": [
+    {
+      "id": "26770",
+      "geometryType": "Point",
+      "observedAt": null,
+      "publishedAt": "2026-09-18T12:35:40.000Z",
+      "validFrom": null,
+      "validTo": null,
+      "source": "idfm-arrets"
+    },
+    {
+      "id": "22033",
+      "geometryType": "Point",
+      "observedAt": null,
+      "publishedAt": "2024-01-17T12:50:54.000Z",
+      "validFrom": null,
+      "validTo": null,
+      "source": "idfm-arrets"
+    }
+  ],
+  "currentParisCount": 3857,
+  "state": "available"
+}

@@ -1,0 +1,34 @@
+{
+  "id": "hubeau",
+  "producer": "OFB / SCHAPI",
+  "source": "https://hubeau.eaufrance.fr/page/api-hydrometrie",
+  "license": "Licence Ouverte 2.0",
+  "testedAt": "2026-10-05T02:54:18.829Z",
+  "rawCount": 4,
+  "retainedCount": 4,
+  "outside": 0,
+  "missingGeometry": 0,
+  "schema": "Référentiel code_station, commune, en_service ; observations date_obs, grandeur_hydro H/Q, resultat_obs mm ou L/s",
+  "sample": [
+    {
+      "id": "F700000102:H",
+      "geometryType": "Point",
+      "observedAt": "2026-10-05T02:20:00.000Z",
+      "publishedAt": null,
+      "validFrom": null,
+      "validTo": null,
+      "source": "hubeau"
+    },
+    {
+      "id": "F700000103:H",
+      "geometryType": "Point",
+      "observedAt": "2026-10-05T02:20:00.000Z",
+      "publishedAt": null,
+      "validFrom": null,
+      "validTo": null,
+      "source": "hubeau"
+    }
+  ],
+  "currentParisCount": 4,
+  "state": "available"
+}

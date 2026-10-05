@@ -1,0 +1,34 @@
+{
+  "id": "satellites",
+  "producer": "CelesTrak",
+  "source": "https://celestrak.org/NORAD/documentation/gp-data-formats.php",
+  "license": "Éléments orbitaux publics CelesTrak ; attribution conservée",
+  "testedAt": "2026-10-05T00:54:35.932Z",
+  "rawCount": 20,
+  "retainedCount": 20,
+  "outside": 0,
+  "missingGeometry": 0,
+  "schema": "TLE 3 lignes ; époque orbitale ; passage calculé SGP4",
+  "sample": [
+    {
+      "id": "25544",
+      "geometryType": null,
+      "observedAt": null,
+      "publishedAt": null,
+      "validFrom": "2026-10-05T09:04:13.653Z",
+      "validTo": "2026-10-05T09:09:20.542Z",
+      "source": "satellites"
+    },
+    {
+      "id": "36086",
+      "geometryType": null,
+      "observedAt": null,
+      "publishedAt": null,
+      "validFrom": "2026-10-05T09:04:13.643Z",
+      "validTo": "2026-10-05T09:09:20.542Z",
+      "source": "satellites"
+    }
+  ],
+  "currentParisCount": 18,
+  "state": "available"
+}

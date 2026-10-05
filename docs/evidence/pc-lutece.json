@@ -1,0 +1,71 @@
+{
+  "id": "pc-lutece",
+  "producer": "Ville de Paris",
+  "source": "https://opendata.paris.fr/explore/dataset/circulation_evenement/",
+  "license": "Licence Ouverte (Etalab)",
+  "testedAt": "2026-10-05T02:53:18.251Z",
+  "rawCount": 161,
+  "retainedCount": 161,
+  "outside": 0,
+  "missingGeometry": 0,
+  "schema": [
+    {
+      "name": "id",
+      "type": "text"
+    },
+    {
+      "name": "starttime",
+      "type": "text"
+    },
+    {
+      "name": "endtime",
+      "type": "text"
+    },
+    {
+      "name": "description",
+      "type": "text"
+    },
+    {
+      "name": "type",
+      "type": "text"
+    },
+    {
+      "name": "subtype",
+      "type": "text"
+    },
+    {
+      "name": "street",
+      "type": "text"
+    },
+    {
+      "name": "polyline",
+      "type": "text"
+    },
+    {
+      "name": "direction",
+      "type": "text"
+    }
+  ],
+  "sample": [
+    {
+      "id": "20270329T020000_500_3286",
+      "geometryType": "MultiLineString",
+      "observedAt": null,
+      "publishedAt": "2026-10-05T02:45:03.000Z",
+      "validFrom": "2027-03-29T00:00:00.000Z",
+      "validTo": "2027-11-25T23:00:00.000Z",
+      "source": "pc-lutece"
+    },
+    {
+      "id": "20251119T094151_1920_1854",
+      "geometryType": "MultiLineString",
+      "observedAt": null,
+      "publishedAt": "2026-10-05T02:45:03.000Z",
+      "validFrom": "2025-11-19T07:41:51.000Z",
+      "validTo": "2030-11-23T01:02:00.000Z",
+      "source": "pc-lutece"
+    }
+  ],
+  "currentParisCount": 144,
+  "state": "available"
+}

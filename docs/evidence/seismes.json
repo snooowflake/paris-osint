@@ -1,0 +1,15 @@
+{
+  "id": "seismes",
+  "producer": "USGS",
+  "source": "https://earthquake.usgs.gov/fdsnws/event/1/",
+  "license": "Domaine public USGS",
+  "testedAt": "2026-10-05T02:56:18.238Z",
+  "rawCount": 0,
+  "retainedCount": 0,
+  "outside": 0,
+  "missingGeometry": 0,
+  "schema": "GeoJSON USGS ; time/updated Unix ms, magnitude, profondeur km",
+  "sample": [],
+  "currentParisCount": 0,
+  "state": "empty"
+}

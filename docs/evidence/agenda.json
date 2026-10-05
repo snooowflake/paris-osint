@@ -1,0 +1,311 @@
+{
+  "id": "agenda",
+  "producer": "Ville de Paris",
+  "source": "https://opendata.paris.fr/explore/dataset/que-faire-a-paris-/",
+  "license": "Open Database License (ODbL)",
+  "testedAt": "2026-10-05T02:55:24.611Z",
+  "rawCount": 3507,
+  "retainedCount": 3318,
+  "outside": 147,
+  "missingGeometry": 42,
+  "schema": [
+    {
+      "name": "id",
+      "type": "text"
+    },
+    {
+      "name": "event_id",
+      "type": "int"
+    },
+    {
+      "name": "url",
+      "type": "text"
+    },
+    {
+      "name": "title",
+      "type": "text"
+    },
+    {
+      "name": "lead_text",
+      "type": "text"
+    },
+    {
+      "name": "description",
+      "type": "text"
+    },
+    {
+      "name": "date_start",
+      "type": "datetime"
+    },
+    {
+      "name": "date_end",
+      "type": "datetime"
+    },
+    {
+      "name": "occurrences",
+      "type": "text"
+    },
+    {
+      "name": "date_description",
+      "type": "text"
+    },
+    {
+      "name": "cover_url",
+      "type": "text"
+    },
+    {
+      "name": "cover_alt",
+      "type": "text"
+    },
+    {
+      "name": "cover_credit",
+      "type": "text"
+    },
+    {
+      "name": "locations",
+      "type": "json_blob"
+    },
+    {
+      "name": "address_name",
+      "type": "text"
+    },
+    {
+      "name": "address_street",
+      "type": "text"
+    },
+    {
+      "name": "address_zipcode",
+      "type": "text"
+    },
+    {
+      "name": "address_city",
+      "type": "text"
+    },
+    {
+      "name": "lat_lon",
+      "type": "geo_point_2d"
+    },
+    {
+      "name": "pmr",
+      "type": "int"
+    },
+    {
+      "name": "blind",
+      "type": "int"
+    },
+    {
+      "name": "deaf",
+      "type": "int"
+    },
+    {
+      "name": "sign_language",
+      "type": "text"
+    },
+    {
+      "name": "mental",
+      "type": "text"
+    },
+    {
+      "name": "transport",
+      "type": "text"
+    },
+    {
+      "name": "contact_url",
+      "type": "text"
+    },
+    {
+      "name": "contact_phone",
+      "type": "text"
+    },
+    {
+      "name": "contact_mail",
+      "type": "text"
+    },
+    {
+      "name": "contact_facebook",
+      "type": "text"
+    },
+    {
+      "name": "contact_twitter",
+      "type": "text"
+    },
+    {
+      "name": "price_type",
+      "type": "text"
+    },
+    {
+      "name": "price_detail",
+      "type": "text"
+    },
+    {
+      "name": "access_type",
+      "type": "text"
+    },
+    {
+      "name": "access_link",
+      "type": "text"
+    },
+    {
+      "name": "access_link_text",
+      "type": "text"
+    },
+    {
+      "name": "updated_at",
+      "type": "datetime"
+    },
+    {
+      "name": "image_couverture",
+      "type": "file"
+    },
+    {
+      "name": "programs",
+      "type": "text"
+    },
+    {
+      "name": "address_url",
+      "type": "text"
+    },
+    {
+      "name": "address_url_text",
+      "type": "text"
+    },
+    {
+      "name": "address_text",
+      "type": "text"
+    },
+    {
+      "name": "title_event",
+      "type": "text"
+    },
+    {
+      "name": "audience",
+      "type": "text"
+    },
+    {
+      "name": "childrens",
+      "type": "text"
+    },
+    {
+      "name": "group",
+      "type": "text"
+    },
+    {
+      "name": "locale",
+      "type": "text"
+    },
+    {
+      "name": "rank",
+      "type": "double"
+    },
+    {
+      "name": "weight",
+      "type": "int"
+    },
+    {
+      "name": "qfap_tags",
+      "type": "text"
+    },
+    {
+      "name": "universe_tags",
+      "type": "text"
+    },
+    {
+      "name": "event_indoor",
+      "type": "int"
+    },
+    {
+      "name": "event_pets_allowed",
+      "type": "int"
+    },
+    {
+      "name": "contact_organisation_name",
+      "type": "text"
+    },
+    {
+      "name": "contact_url_text",
+      "type": "text"
+    },
+    {
+      "name": "contact_vimeo",
+      "type": "text"
+    },
+    {
+      "name": "contact_deezer",
+      "type": "text"
+    },
+    {
+      "name": "contact_tiktok",
+      "type": "text"
+    },
+    {
+      "name": "contact_twitch",
+      "type": "text"
+    },
+    {
+      "name": "contact_spotify",
+      "type": "text"
+    },
+    {
+      "name": "contact_youtube",
+      "type": "text"
+    },
+    {
+      "name": "contact_bandcamp",
+      "type": "text"
+    },
+    {
+      "name": "contact_linkedin",
+      "type": "text"
+    },
+    {
+      "name": "contact_snapchat",
+      "type": "text"
+    },
+    {
+      "name": "contact_whatsapp",
+      "type": "text"
+    },
+    {
+      "name": "contact_instagram",
+      "type": "text"
+    },
+    {
+      "name": "contact_messenger",
+      "type": "text"
+    },
+    {
+      "name": "contact_pinterest",
+      "type": "text"
+    },
+    {
+      "name": "contact_soundcloud",
+      "type": "text"
+    },
+    {
+      "name": "univers",
+      "type": "text"
+    }
+  ],
+  "sample": [
+    {
+      "id": "15396",
+      "geometryType": "Point",
+      "observedAt": null,
+      "publishedAt": "2022-01-13T13:21:39.000Z",
+      "validFrom": null,
+      "validTo": null,
+      "source": "agenda"
+    },
+    {
+      "id": "22268",
+      "geometryType": "Point",
+      "observedAt": null,
+      "publishedAt": "2022-06-21T11:52:57.000Z",
+      "validFrom": null,
+      "validTo": null,
+      "source": "agenda"
+    }
+  ],
+  "currentParisCount": 80,
+  "state": "available"
+}
