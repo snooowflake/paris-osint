@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Connexion — Paris OSINT</title>
+    <link rel="stylesheet" href="/login.css" />
+  </head>
+  <body>
+    <main>
+      <span class="mark">P/</span>
+      <h1>Paris OSINT</h1>
+      <p>Accès privé aux signaux publics de Paris.</p>
+      <form id="login">
+        <label
+          >Identifiant<input
+            name="login"
+            autocomplete="username"
+            required
+            maxlength="64" /></label
+        ><label
+          >Mot de passe<input
+            name="password"
+            type="password"
+            autocomplete="current-password"
+            required
+            maxlength="512" /></label
+        ><button>Se connecter</button>
+        <p id="error" role="alert"></p>
+      </form>
+      <small
+        >Aucun identifiant par défaut. Les clés fournisseurs restent sur le
+        serveur.</small
+      >
+    </main>
+    <script src="/login.js" defer></script>
+  </body>
+</html>

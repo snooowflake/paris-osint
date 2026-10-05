@@ -1,18 +1,18 @@
 {
-  "name": "gods-eye-view",
+  "name": "paris-osint",
   "private": true,
-  "version": "0.2.1",
-  "description": "A real-time intelligence console for planet Earth — photorealistic 3D globe, live aircraft/ships/satellites/earthquakes/CCTV, and hands-free voice control. Runs in a browser.",
+  "version": "0.3.0",
+  "description": "Paris OSINT : carte Cesium et signaux publics actuels, sourcés et filtrés sur Paris",
   "type": "module",
   "license": "MIT",
   "author": "Bilawal Sidhu",
-  "homepage": "https://github.com/bilawalsidhu/gods-eye-view#readme",
+  "homepage": "https://github.com/snooowflake/paris-osint",
   "repository": {
     "type": "git",
-    "url": "https://github.com/bilawalsidhu/gods-eye-view.git"
+    "url": "https://github.com/snooowflake/paris-osint.git"
   },
   "bugs": {
-    "url": "https://github.com/bilawalsidhu/gods-eye-view/issues"
+    "url": "https://github.com/snooowflake/paris-osint/issues"
   },
   "engines": {
     "node": ">=24.14.0 <25 || >=26 <27"
@@ -37,10 +37,10 @@
     "format:check": "node scripts/format.mjs --check",
     "layer-token:next": "node scripts/next-layer-state-token.mjs",
     "layer-token:check": "node scripts/check-layer-state-tokens.mjs",
-    "dev": "vite",
+    "dev": "vite --config vite.paris.config.js",
     "dev:secure": "./scripts/dev-secure.sh",
     "opensky:import": "./scripts/opensky-import-client.sh",
-    "build": "vite build",
+    "build": "vite build --config vite.paris.config.js",
     "build:panel": "node scripts/build-panel.mjs",
     "preview": "vite preview",
     "test": "node scripts/run-unit-tests.mjs",
@@ -48,7 +48,12 @@
     "qa:map-source-tray": "node scripts/qa-map-source-tray.mjs",
     "check:boundaries": "node scripts/check-import-directions.mjs && node scripts/check-package-boundaries.mjs",
     "qa:transit": "node scripts/qa-transit.mjs",
-    "mcp": "node server/mcp/stdio.js"
+    "mcp": "node server/mcp/stdio.js",
+    "start": "node --env-file-if-exists=.env server/paris/server.mjs",
+    "test:paris": "node --test src/paris/*.test.mjs",
+    "diagnostic:sources": "node --env-file-if-exists=.env scripts/diagnostic-paris.mjs",
+    "user:create": "node scripts/create-paris-user.mjs",
+    "docs:sources": "node scripts/document-paris-sources.mjs"
   },
   "dependencies": {
     "@jtarrio/signals": "^0.10.0",
@@ -60,7 +65,9 @@
     "hls.js": "^1.7.3",
     "mgrs": "^2.1.0",
     "pbf": "^5.1.2",
-    "satellite.js": "^6.0.2"
+    "satellite.js": "^6.0.2",
+    "polygon-clipping": "0.15.7",
+    "proj4": "2.19.10"
   },
   "devDependencies": {
     "prettier": "3.9.6",

@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#080d12" />
+    <title>Paris OSINT</title>
+  </head>
+  <body>
+    <header>
+      <a class="brand" href="/" aria-label="Paris OSINT, carte"
+        ><span class="brand-mark">P/</span
+        ><span
+          >PARIS <b>OSINT</b
+          ><small>Signaux publics · Paris uniquement</small></span
+        ></a
+      >
+      <nav aria-label="Navigation principale">
+        <button data-nav="map" aria-current="page">Carte</button
+        ><button data-nav="situation">Situation</button
+        ><button data-nav="history">Historique</button
+        ><button data-nav="sources">Sources</button
+        ><button data-nav="settings">Réglages</button>
+      </nav>
+      <span id="clock"></span>
+    </header>
+    <main id="main">
+      <section id="map-page" aria-label="Carte 3D de Paris">
+        <div
+          id="map"
+          tabindex="0"
+          aria-label="Carte interactive 3D de Paris. Les contrôles de recherche et de recentrage sont accessibles au clavier."
+        ></div>
+        <aside id="layers">
+          <div class="panel-title">
+            <h1>Paris, maintenant</h1>
+            <button id="close-layers">Fermer les couches</button>
+          </div>
+          <p class="muted">Des sources datées. Aucun signal inventé.</p>
+          <label
+            >Rechercher dans Paris<input
+              id="search"
+              type="search"
+              placeholder="Lieu, adresse, objet…"
+              autocomplete="off"
+          /></label>
+          <div id="search-results" class="results" aria-live="polite"></div>
+          <div class="toolbar">
+            <button id="recenter">Recentrer Paris</button
+            ><button id="refresh">Actualiser</button>
+          </div>
+          <label
+            >Rechercher une couche<input
+              id="layer-search"
+              type="search"
+              placeholder="Vélib’, Seine, circulation…"
+          /></label>
+          <div id="layer-list"></div>
+          <details>
+            <summary>Favoris et vues enregistrées</summary>
+            <div id="favorites-list"></div>
+            <div id="views-list"></div>
+            <button id="save-view">Enregistrer cette vue</button>
+          </details>
+          <details>
+            <summary>Légende</summary>
+            <div id="legend"></div>
+            <p class="muted">
+              Les contours correspondent aux limites officielles. Les couleurs
+              identifient les couches, sans score de confiance.
+            </p>
+          </details>
+          <p id="map-status" class="muted" aria-live="polite"></p>
+        </aside>
+        <button id="show-layers">Afficher les couches</button>
+        <article id="object-card" hidden aria-live="polite"></article>
+        <div id="credits"></div>
+        <div class="map-footer">
+          <span>PARIS / 48.8566° N · 2.3522° E</span
+          ><span>WGS84 · heures Europe/Paris</span>
+        </div>
+      </section>
+      <section id="content-page" hidden tabindex="-1">
+        <div id="page-content"></div>
+        <button id="back-map">Retour à la carte</button>
+      </section>
+    </main>
+    <div id="toast" role="status"></div>
+    <script type="module" src="/src/paris/index.js"></script>
+  </body>
+</html>
