@@ -11,14 +11,14 @@ import {
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
-import { overpassProxy } from 'gods-eye-view/server/providers/overpass';
-import { militaryInstallationsProxy } from 'gods-eye-view/server/providers/military-installations';
+import { overpassProxy } from 'paris-osint/server/providers/overpass';
+import { militaryInstallationsProxy } from 'paris-osint/server/providers/military-installations';
 import {
   regionalBriefProxy,
   weatherEffectsProxy,
-} from 'gods-eye-view/server/providers/regional';
-import { openAiRealtimeProxy } from 'gods-eye-view/server/providers/openai';
-import { keySetupEndpoint } from 'gods-eye-view/server/standalone/key-setup';
+} from 'paris-osint/server/providers/regional';
+import { openAiRealtimeProxy } from 'paris-osint/server/providers/openai';
+import { keySetupEndpoint } from 'paris-osint/server/standalone/key-setup';
 import { realtimeInstructions } from '../../server/providers/openai/instructions.js';
 import { GEV_REALTIME_TOOLS } from '../../server/providers/openai/tools.js';
 import { standaloneVoiceTools } from '../../server/standalone/voiceTools.js';
