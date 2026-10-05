@@ -1,7 +1,7 @@
 {
   "name": "paris-osint",
   "private": true,
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Paris OSINT : carte Cesium et signaux publics actuels, sourcés et filtrés sur Paris",
   "type": "module",
   "license": "MIT",

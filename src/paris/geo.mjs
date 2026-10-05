@@ -1,5 +1,4 @@
 import polygonClipping from 'polygon-clipping';
-export const airportBounds = [2.16, 48.68, 2.65, 49.08];
 export const point = (p) =>
   Array.isArray(p) &&
   p.length >= 2 &&
@@ -105,19 +104,9 @@ function lineClip(line, g) {
   }
   return out;
 }
-export function clip(g, boundary, airports = false) {
+export function clip(g, boundary) {
   if (!validGeometry(g)) return null;
-  if (g.type === 'Point') {
-    const p = g.coordinates;
-    return contains(p, boundary) ||
-      (airports &&
-        p[0] >= airportBounds[0] &&
-        p[0] <= airportBounds[2] &&
-        p[1] >= airportBounds[1] &&
-        p[1] <= airportBounds[3])
-      ? g
-      : null;
-  }
+  if (g.type === 'Point') return contains(g.coordinates, boundary) ? g : null;
   if (g.type === 'MultiPoint') {
     const c = g.coordinates.filter((p) => contains(p, boundary));
     return c.length ? { type: g.type, coordinates: c } : null;
@@ -146,16 +135,9 @@ export function utc(v) {
   const d = new Date(v);
   return Number.isFinite(d.getTime()) ? d.toISOString() : null;
 }
-export function parisDay(s, next = false) {
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(s || '')) return null;
-  let target = Date.parse(s + 'T00:00:00Z');
-  if (
-    !Number.isFinite(target) ||
-    new Date(target).toISOString().slice(0, 10) !== s
-  )
-    return null;
-  if (next) target += 864e5;
-  let t = target;
+// Heure murale de Paris (changements d’heure compris) vers un instant UTC.
+function parisWallClock(year, month, day, hour = 0, minute = 0, second = 0) {
+  const target = Date.UTC(year, month - 1, day, hour, minute, second);
   const f = new Intl.DateTimeFormat('en-GB', {
     timeZone: 'Europe/Paris',
     year: 'numeric',
@@ -166,6 +148,7 @@ export function parisDay(s, next = false) {
     second: '2-digit',
     hourCycle: 'h23',
   });
+  let t = target;
   for (let i = 0; i < 3; i++) {
     const p = Object.fromEntries(
       f.formatToParts(t).map((x) => [x.type, x.value]),
@@ -180,7 +163,36 @@ export function parisDay(s, next = false) {
     );
     t -= local - target;
   }
-  return new Date(t).toISOString();
+  return t;
+}
+export function parisDay(s, next = false) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(s || '')) return null;
+  const target = Date.parse(s + 'T00:00:00Z');
+  if (
+    !Number.isFinite(target) ||
+    new Date(target).toISOString().slice(0, 10) !== s
+  )
+    return null;
+  const d = new Date(target + (next ? 864e5 : 0));
+  return new Date(
+    parisWallClock(d.getUTCFullYear(), d.getUTCMonth() + 1, d.getUTCDate()),
+  ).toISOString();
+}
+// Dates Navitia/PRIM « AAAAMMJJTHHMMSS » exprimées en heure de Paris.
+export function parisLocal(s) {
+  const m = /^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})$/.exec(s || '');
+  if (!m) return utc(s);
+  const [y, mo, d, h, mi, se] = m.slice(1).map(Number);
+  const check = new Date(Date.UTC(y, mo - 1, d, h, mi, se));
+  if (
+    check.getUTCMonth() !== mo - 1 ||
+    check.getUTCDate() !== d ||
+    h > 23 ||
+    mi > 59 ||
+    se > 59
+  )
+    return null;
+  return new Date(parisWallClock(y, mo, d, h, mi, se)).toISOString();
 }
 export function current(f, s, now = Date.now()) {
   const p = f.properties || {};

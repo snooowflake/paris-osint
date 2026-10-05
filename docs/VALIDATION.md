@@ -1,5 +1,15 @@
 # Validation de Paris OSINT
 
+## Refonte circulation, transports et carte (version 0.4.0)
+
+Vérifications réalisées le 5 octobre 2026 dans un conteneur de développement dont le réseau sortant bloque opendata.paris.fr, IDFM, PRIM, TomTom et les serveurs de tuiles. Aucune réponse fournisseur réelle n’a donc pu être obtenue pour cette version ; les preuves réelles antérieures restent celles de docs/evidence/.
+
+- `npm run build` : réussi. `npm run test:paris` : 46 tests réussis (nouveaux : info trafic PRIM avec périodes en heure de Paris et lignes hors Paris écartées, prochains passages SIRI avec cache partagé, capteurs J-1, tuiles TomTom bornées/budget/repli, lignes par arrêt, travaux, codes CIFS, migration des préférences, archives des sources retirées non servies).
+- Parcours navigateur (Chromium, bureau 1440 × 900 en densité 2 et mobile 390 × 844) sur le serveur de production local avec une base en mémoire et des données **TEST SYNTHÉTIQUES** hors dépôt, tuiles simulées : panneau de couches, bascule exclusive trafic direct / J-1, légende, état du trafic par ligne, fiche de ligne, recherche locale puis adresses, fiche d’arrêt avec lignes et prochains passages, fiche de tronçon, sélecteur de fond, vue inclinée 3D, pages Sources, Situation, Réglages. Défauts trouvés et corrigés pendant ce parcours : matériaux Cesium partagés détruits, rendu à la demande figé après retrait d’une couche, crédits hors cadre, résultats de recherche redessinés pendant le clic, pictogrammes à double échelle, panneau mobile recouvert.
+- À vérifier en conditions réelles sur la machine de déploiement : première collecte des capteurs J-1 (`comptages-routiers-permanents`) et du jeu IDFM `arrets-lignes`, puis, après ajout des clés, tuiles TomTom, info trafic PRIM et prochains passages (`npm run diagnostic:sources`, contrôle visuel de la carte).
+
+## Version 0.3.0
+
 Vérifications réalisées le 5 octobre 2026, sur une installation Linux distante. Les paramètres d’exploitation privés sont consignés hors Git. Ce document décrit des contrôles effectués ; il ne garantit pas la disponibilité future des fournisseurs.
 
 ## Tests et build
@@ -11,7 +21,7 @@ Vérifications réalisées le 5 octobre 2026, sur une installation Linux distant
 - Diagnostic réel des sources : réussi ; chaque preuve possède son schéma, sa région, son heure de test et au plus deux exemples expurgés.
 - Sauvegarde SQLite cohérente et copie privée de la configuration : exécutées et vérifiées. Démarrage systemd et redémarrage du seul service applicatif : vérifiés.
 
-Les tests Paris couvrent : limites administratives avec bois et trous, bornage aérien distinct, clipping des polygones/lignes, déduplication, pagination intégrale et changement de total fournisseur, EPSG:2154 vers WGS84, unités H/Q/aviation, dates UTC et changements d’heure, sources vides/périmées/en panne/sans clé, quotas atomiques avec réserve, cache partagé, baux SQLite entre processus et annulation.
+Les tests Paris couvrent : limites administratives avec bois et trous, clipping des polygones/lignes, déduplication, pagination intégrale et changement de total fournisseur, EPSG:2154 vers WGS84, unités H/Q, dates UTC et changements d’heure, sources vides/périmées/en panne/sans clé, quotas atomiques avec réserve, cache partagé, baux SQLite entre processus et annulation.
 
 Ils couvrent également les hôtes sortants autorisés, ports, identifiants d’URL, redirections, métadonnées cloud, taille des réponses, validation JSON, mots de passe/sessions, CSRF, rôles administrateur/lecteur, accès aux fichiers privés, entrées HTML malveillantes, export limité, annotations et vues parisiennes. La pagination de 1 005 archives synthétiques vérifie les deux pages sans doublons. Les courbes distinguent stations et unités, et conservent la correction la plus récemment acquise.
 
@@ -19,7 +29,7 @@ Ils couvrent également les hôtes sortants autorisés, ports, identifiants d’
 
 Connexion avec l’administrateur existant ; cinq entrées françaises ; carte Cesium réellement rendue avec limites Paris, couches de mesures, sélection d’objets réels, fiches et liens Sources ; navigation Situation/Sources/Historique/Réglages puis retour à la carte.
 
-Affichage mobile 390 × 844 : cinq entrées visibles, ouverture/fermeture du panneau de couches, activation de la Seine, sélection de fiche. Fonds OpenStreetMap et IGN Plan vérifiés. Recherche réelle IGN/BAN : adresse avenue Anatole-France dans Paris ; requête « Marseille » limitée à des adresses parisiennes. Option aéroports désactivée par défaut, activation puis désactivation vérifiées.
+Affichage mobile 390 × 844 : cinq entrées visibles, ouverture/fermeture du panneau de couches, activation de la Seine, sélection de fiche. Fonds OpenStreetMap et IGN Plan vérifiés. Recherche réelle IGN/BAN : adresse avenue Anatole-France dans Paris ; requête « Marseille » limitée à des adresses parisiennes.
 
 Historique réellement acquis : date de l’événement distinguée de la première acquisition, filtrage Hub’Eau, courbe de plusieurs observations réelles et légende explicitant les segments entre points. Les graphiques portent sur les archives chargées, avec indication du total et pagination explicite.
 
@@ -36,11 +46,11 @@ Une intégration vérifiée peut être temporairement ancienne, vide ou en panne
 ## Non testé en conditions réelles ou non retenu
 
 - Airparif, TomTom incidents et PRIM messages : connecteurs préparés, tests synthétiques ; clés autorisées absentes, quotas du compte et droits contractuels à vérifier avant activation.
-- Vitesses TomTom, prochains passages/horaires PRIM, mesures météo et radar Météo-France : non activés ; absence de clé ou connecteur restant à développer. Aucune coordonnée GPS de véhicule déduite des horaires.
+- Mesures météo et radar Météo-France : non activés ; connecteur restant à développer. Aucune coordonnée GPS de véhicule déduite des horaires.
 - AIS/AISStream, webcams, flux Sytadin/DiRIF, bruit/pollens et autres fournisseurs restreints : aucune couverture réelle autorisée démontrée ; exclusions détaillées dans le registre. Aucun bateau ou flux vidéo simulé.
 - Sentinel : catalogue et empreintes d’acquisition seulement ; pixels, mosaïques et téléchargement d’archives non implémentés. Les nuages concernent la scène, pas une mesure dans une rue.
 - Photogrammétrie Google/Cesium, bâtiments 3D et terrain détaillé : non activés. La carte utilise le globe 3D Cesium et des fonds cartographiques de référence ; aucun service payant engagé.
-- Sources statiques ANFR/ARCEP/APUR/équipements et comptages J-1 : hors des couches d’activité actuelle, selon la priorité donnée aux API actuelles.
+- Sources statiques ANFR/ARCEP/APUR/équipements : hors des couches d’activité actuelle, selon la priorité donnée aux API actuelles.
 - Pas d’essai prolongé sur plusieurs jours, charge multi-utilisateur réelle, restauration complète de la sauvegarde ni exercice de retour arrière sur une autre version. Les procédures sont préparées, et la sauvegarde actuelle est contrôlée.
 - Pas d’exposition publique ni TLS/Nginx public testé : aucun domaine autorisé fourni. L’accès privé/VPN est vérifié.
 - Séparation lecteur/administrateur vérifiée sur serveur de test isolé ; aucun compte de lecteur supplémentaire créé dans la production pour le test.

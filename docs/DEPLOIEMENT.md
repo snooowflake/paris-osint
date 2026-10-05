@@ -23,11 +23,11 @@ Vite dev/preview n’est pas le serveur de production. Le service Node sert le b
 
 ## Collectes, coûts et rétention
 
-config/paris-sources.json contient les plafonds locaux et cadences. Confirmer le quota effectif du compte avant activation d’une clé. La réserve de 20 % n’autorise jamais à dépasser un quota fournisseur plus faible. PRIM : jusqu’à cinq lignes vérifiées, une requête par ligne toutes les 15 minutes, soit 480 appels/jour maximum avant erreurs ; marge sur 1 000/jour. TomTom et Airparif : produits, droits de cache, coûts et quota du compte à confirmer.
+config/paris-sources.json contient les plafonds locaux et cadences. Confirmer le quota effectif du compte avant activation d’une clé. La réserve de 20 % n’autorise jamais à dépasser un quota fournisseur plus faible. PRIM (`PRIM_API_KEY`) : info trafic par requête globale toutes les 5 minutes, soit 288 appels/jour pour toutes les lignes, marge sur 1 000/jour ; prochains passages uniquement à l’ouverture d’une fiche d’arrêt parisien, cache partagé 45 s par arrêt, plafond local 5 000/jour. TomTom (`TOMTOM_API_KEY`) : trafic en direct par tuiles servies via `/api/traffic-tiles/` (zoom 11 à 18, emprise de Paris, cache serveur 2 min, plafond local 7 500 tuiles/jour dont 20 % de réserve, contrôle d’une tuile toutes les 10 min) ; incidents v5 avec la même clé. Vérifier le quota de tuiles du compte TomTom et ajuster `dailyBudget` si besoin. Airparif : produit, droits de cache, coûts et quota du compte à confirmer. Après ajout d’une clé dans .env, redémarrer uniquement ce service.
 
 Aucun bouton utilisateur ne force une collecte anticipée. Un seul collecteur partagé, reprise avec temporisation, erreurs isolées. La collecte récente et la date d’observation sont distinctes. Les tableaux peuvent légitimement être vides ou anciens. Pas de notifications externes ni d’IA cloud payante.
 
-Rétention des révisions : au plus 14 jours depuis acquisition, 2 jours pour Belib’, zéro pour aviation, Vélib’, éléments orbitaux, images et fournisseurs à droits non confirmés. Plafond global 50 000 révisions ; purge au cycle serveur. Pas de conservation automatique de flux vidéo, audio ou fichiers d’imagerie.
+Rétention des révisions : au plus 14 jours depuis acquisition, zéro pour Vélib’, capteurs J-1, éléments orbitaux, images, tuiles de trafic, PRIM et fournisseurs à droits non confirmés. Les archives des sources retirées (aéronefs, séismes, Vigicrues, Belib’) ne sont plus servies et disparaissent à l’échéance de leur rétention. Plafond global 50 000 révisions ; purge au cycle serveur. Pas de conservation automatique de flux vidéo, audio ou fichiers d’imagerie.
 
 ## Sauvegarde, mise à jour et retour arrière
 

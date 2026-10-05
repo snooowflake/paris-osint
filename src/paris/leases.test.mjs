@@ -65,16 +65,19 @@ test('Annulation avant requête : aucun appel ni budget consommé', async () => 
     controller.abort();
     let calls = 0;
     await assert.rejects(
-      request('https://api.adsb.lol/v2/point/48.86/2.35/23', {
-        store: s,
-        provider: 'TEST',
-        budget: 10,
-        signal: controller.signal,
-        fetcher: async () => {
-          calls++;
-          return new Response('{}');
+      request(
+        'https://hubeau.eaufrance.fr/api/v2/hydrometrie/observations_tr',
+        {
+          store: s,
+          provider: 'TEST',
+          budget: 10,
+          signal: controller.signal,
+          fetcher: async () => {
+            calls++;
+            return new Response('{}');
+          },
         },
-      }),
+      ),
     );
     assert.equal(calls, 0);
     assert.equal(s.used('TEST'), 0);

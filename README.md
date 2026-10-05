@@ -8,28 +8,38 @@ Fork de [God’s Eye View](https://github.com/bilawalsidhu/gods-eye-view) par Bi
 
 Les preuves expurgées et datées sont dans [le registre généré](docs/SOURCES.md) et docs/evidence/. Le registre unique `config/paris-sources.json` pilote l’application.
 
-- Circulation PC Lutèce : publication annoncée toutes les cinq minutes.
-- Travaux en cours : publication hebdomadaire non exhaustive, aucun badge « direct ».
-- Vélib’ : GBFS opérateur, vélos mécaniques/électriques et bornettes ; repli Paris Data dédupliqué.
-- Belib’ : disponibilité horodatée de chaque point de recharge. Les points anciens sont écartés.
-- Hub’Eau : stations officielles de Paris, hauteurs selon le référentiel de chaque station et débits ; unités converties et provenance conservée.
-- Vigicrues : niveau officiel du tronçon Seine à Paris ; géométrie visible limitée à Paris.
-- Météo-France : vigilance département 75 J/J1 via republication ouverte IDF, sans prétendue mesure de rue.
-- adsb.lol : aéronefs effectivement reçus dans Paris, y compris classification militaire du producteur, couverture partielle.
-- CelesTrak : passages calculés par SGP4, éléments orbitaux datés ; aucune observation optique.
-- Sentinel-2 : catalogue STAC des trois derniers jours, acquisition, résolution et nuages de la scène. Empreintes uniquement dans cette version ; pas d’images téléchargées ni de vidéo.
-- USGS : événements sismiques récents filtrés Paris, souvent vide légitime, couche secondaire.
-- IDFM : référentiels d’arrêts et de tracés pour localisation/recherche/jointures, clairement distincts d’observations.
+### Circulation
 
-Airparif, incidents TomTom v5 et messages PRIM sont préparés mais **sans réponse réelle testée faute de clés autorisées**. Les passages IDFM, vitesses TomTom, radar météo, AIS, webcams, FIRMS et autres cibles restent explicitement non intégrés, bloqués ou non retenus dans Sources. Aucun flux indisponible n’est remplacé par une simulation.
+- **Trafic en direct (TomTom)** : tronçons colorés du vert (fluide) au rouge foncé (bloqué) selon la vitesse mesurée comparée à la vitesse libre, comme sur un plan grand public. Tuiles servies par un proxy serveur à chemin fixe, bornées à Paris, cache partagé de 2 minutes et plafond quotidien ; la clé `TOMTOM_API_KEY` reste côté serveur.
+- **Trafic mesuré la veille (capteurs PC Lutèce, J-1)** : sans clé, même code couleur sur les tronçons équipés de boucles, à la même heure la veille. Clairement libellé « pas du direct ». Une seule des deux couches de trafic est affichée à la fois.
+- **Fermetures et événements de voirie (PC Lutèce)** : publication annoncée toutes les cinq minutes au format Waze CIFS ; voies fermées en tirets rouges et blancs, chantiers et incidents avec pictogrammes, sens et période.
+- **Travaux perturbants** : niveau officiel (très perturbant / perturbant), statut, période, objet, impact et maître d’ouvrage ; publication hebdomadaire non exhaustive, aucun badge « direct ».
+- Incidents TomTom v5 : préparés avec la même clé.
+
+### Transports en commun
+
+- **Métro, RER, tram et train** : tracés IDFM aux couleurs officielles, pastilles de ligne ; référence cartographique, sans position de rame.
+- **Stations et arrêts** (métro, RER, tram, bus) : référentiel IDFM ; lignes desservies par arrêt (jeu IDFM « arrets-lignes »).
+- **État du trafic** par ligne (requête globale PRIM, toutes les lignes en un appel toutes les 5 min) et **prochains passages** à l’ouverture d’une fiche d’arrêt (SIRI Lite, cache 45 s par arrêt). Nécessitent `PRIM_API_KEY` (compte gratuit IDFM) ; aucune position GPS de véhicule.
+
+### Autres signaux
+
+- Vélib’ : GBFS opérateur, vélos mécaniques/électriques et bornettes ; repli Paris Data dédupliqué.
+- Hub’Eau : stations officielles de Paris, hauteurs selon le référentiel de chaque station et débits ; unités converties et provenance conservée.
+- Météo-France : vigilance département 75 J/J1 via republication ouverte IDF, sans prétendue mesure de rue.
+- CelesTrak : passages calculés par SGP4, éléments orbitaux datés ; aucune observation optique.
+- Sentinel-2 : catalogue STAC des trois derniers jours, empreintes uniquement ; pas d’images téléchargées ni de vidéo.
+- Que Faire à Paris ? : événements programmés.
+
+Aéronefs, séismes, Vigicrues et Belib’ ont été retirés. Airparif, TomTom et PRIM sont implémentés mais **sans réponse réelle testée faute de clés autorisées** ; les capteurs J-1 et le jeu « arrets-lignes » sont implémentés sans clé et attendent leur première collecte réelle sur la machine de déploiement. Aucun flux indisponible n’est remplacé par une simulation.
 
 L’état peut devenir « données anciennes », « panne » ou « vide légitime » après un test réussi. Une collecte récente ne rajeunit jamais l’observation. Les coûts associés aux clés dépendent du compte du producteur ; aucun service payant n’est souscrit automatiquement.
 
 ## Périmètre et utilisation
 
-Limites officielles de Paris et des 20 arrondissements, incluant ses bois. Filtrage et découpe de géométries côté serveur et carte. Recherche IGN/BAN géofiltrée, favoris, annotations et vues bornés à Paris. L’option **Contexte des aéroports parisiens**, désactivée par défaut, étend uniquement l’aviation à un rectangle borné couvrant CDG, Orly et Le Bourget.
+Limites officielles de Paris et des 20 arrondissements, incluant ses bois. Filtrage et découpe de géométries côté serveur et carte. Recherche IGN/BAN géofiltrée, favoris, annotations et vues bornés à Paris.
 
-OSM et IGN/Géoplateforme permettent une carte sans clé Google/Cesium photoréaliste. Le globe est en 3D ; la 3D photoréaliste des bâtiments n’est pas activée. Fonds d’orthophotographie = références datées, jamais une observation en direct. Simulations, effets tactiques, audio et IA sont désactivés. Les effets graphiques facultatifs sont étiquetés.
+La carte s’ouvre en vue de dessus, comme un plan : rendu à la densité réelle de l’écran, tuiles choisies à environ un texel par pixel, sans brume ni atmosphère, voile léger hors de Paris. Fonds : Plan IGN atténué (par défaut, la circulation y ressort mieux), Plan IGN, photographies aériennes IGN et OpenStreetMap, sans clé Google/Cesium. Boutons de zoom, boussole, vue inclinée 3D et légende dynamique. Fonds d’orthophotographie = références datées, jamais une observation en direct. Simulations, effets tactiques, audio et IA sont désactivés. Les effets graphiques facultatifs sont étiquetés.
 
 Les données synthétiques des tests n’entrent jamais dans le stockage réel. Aucune caméra privée, reconnaissance faciale, lecture de plaque ou trajectoire individuelle de vélo. Le logiciel ne prétend pas mesurer les foules ou identifier une panne de télécommunication à une adresse.
 

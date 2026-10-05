@@ -17,8 +17,7 @@ import { createApplicationServer } from '../../server/paris/server.mjs';
 import { validatePreferences } from '../../server/paris/routes.mjs';
 import { privateAddress, vpnAddress } from '../../server/paris/network.mjs';
 import { search } from '../../server/paris/search.mjs';
-import { aircraft } from '../../server/paris/extensions.mjs';
-import { hydro, vigilance, meteo } from '../../server/paris/environment.mjs';
+import { meteo } from '../../server/paris/environment.mjs';
 import { feature } from '../../server/paris/paris-data.mjs';
 const reply = (j) => new Response(JSON.stringify(j));
 test('Scrypt, mots de passe faibles refusés et aucun administrateur par défaut', () => {
@@ -153,63 +152,6 @@ test('Géocodage IGN borné à Paris, partagé et ne conserve pas un score inven
   } finally {
     s.close();
   }
-});
-test('ADS-B unités, âge de position et classification de source conservés', async () => {
-  const source = registry.find((s) => s.id === 'adsb'),
-    now = Date.now();
-  const r = await aircraft(source, {
-    fetcher: async () =>
-      reply({
-        now,
-        ac: [
-          {
-            hex: 'TEST',
-            lat: 48.86,
-            lon: 2.35,
-            seen_pos: 2,
-            alt_baro: 10000,
-            gs: 100,
-            dbFlags: 1,
-          },
-        ],
-      }),
-  });
-  assert.equal(r.features[0].properties.altitudeMeters, 3048);
-  assert(Math.abs(r.features[0].properties.speedMps - 51.4444) < 0.001);
-  assert(r.features[0].properties.militaryClassifiedBySource);
-  assert.equal(Date.parse(r.features[0].properties.observedAt), now - 2000);
-  await assert.rejects(
-    aircraft(source, { fetcher: async () => reply({ ac: {} }) }),
-  );
-});
-test('Vigicrues prend le code et le niveau officiels, pas un seuil personnel', async () => {
-  const s = registry.find((s) => s.id === 'vigicrues');
-  const r = await vigilance(s, {
-    fetcher: async () =>
-      reply({
-        type: 'FeatureCollection',
-        DtHrInfoVigiCru: new Date().toISOString(),
-        features: [
-          {
-            properties: {
-              CdEntCru: 'TEST-code',
-              lbentcru: 'Seine à Paris',
-              NivInfViCr: 2,
-            },
-            geometry: {
-              type: 'LineString',
-              coordinates: [
-                [2.3, 48.85],
-                [2.4, 48.86],
-              ],
-            },
-          },
-        ],
-      }),
-  });
-  assert.equal(r.features[0].id, 'TEST-code');
-  assert.equal(r.features[0].properties.status, 'Jaune');
-  assert(r.features[0].properties.official);
 });
 test('Vigilance météo reste départementale sans point géographique fictif', async () => {
   const s = registry.find((s) => s.id === 'meteo-vigilance');
@@ -367,6 +309,41 @@ test('Serveur réel : login, sessions, CSRF, admin/lecteur, cache, exports et fi
       (await call('/api/refresh', { method: 'POST', headers, body: '{}' }))
         .status,
       200,
+    );
+    const prefs = await call('/api/preferences', { headers }).then((r) =>
+      r.json(),
+    );
+    assert.equal(prefs.version, 2);
+    assert(prefs.layers.includes('pc-lutece'));
+    assert(!('airportContext' in prefs));
+    for (const [path, status] of [
+      ['/api/traffic-tiles/14/8299/5636.png', 503],
+      ['/api/traffic-tiles/14/8299/5636.jpg', 404],
+      ['/api/departures?stop=12345', 503],
+      ['/api/departures?stop=STIF:1', 400],
+    ])
+      assert.equal((await call(path, { headers })).status, status, path);
+    store.archive({ id: 'adsb', nature: 'measurement', retentionDays: 1 }, [
+      feature(
+        { id: 'adsb', nature: 'measurement' },
+        'TEST-RETIRE',
+        'TEST SYNTHÉTIQUE source retirée',
+        null,
+        {},
+        { observedAt: new Date().toISOString() },
+      ),
+    ]);
+    const retired = new URLSearchParams({
+      from: new Date(Date.now() - 60000).toISOString(),
+      to: new Date(Date.now() + 60000).toISOString(),
+    });
+    const visible = await call('/api/history?' + retired, { headers }).then(
+      (r) => r.json(),
+    );
+    assert(!visible.rows.some((r) => r.source === 'adsb'));
+    assert.equal(
+      (await call('/api/history?source=adsb&' + retired, { headers })).status,
+      400,
     );
     assert.equal(
       (await call('/api/export?source=tomtom', { headers })).status,

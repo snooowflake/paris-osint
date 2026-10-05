@@ -102,46 +102,6 @@ export async function hydro(s, o, boundary) {
       'Référentiel code_station, commune, en_service ; observations date_obs, grandeur_hydro H/Q, resultat_obs mm ou L/s',
   };
 }
-export async function vigilance(s, o) {
-  const j = await request(
-    'https://www.vigicrues.gouv.fr/services/InfoVigiCru.geojson',
-    o,
-  );
-  if (
-    j.type !== 'FeatureCollection' ||
-    !Array.isArray(j.features) ||
-    !utc(j.DtHrInfoVigiCru)
-  )
-    throw Error('Bulletin Vigicrues invalide');
-  const rows = j.features.filter(
-    (x) => x.properties?.lbentcru === 'Seine à Paris',
-  );
-  const features = rows.map((r) => {
-    const p = r.properties,
-      n = Number(p.NivInfViCr);
-    if (![1, 2, 3, 4].includes(n) || !p.CdEntCru)
-      throw Error('Niveau officiel invalide');
-    return feature(
-      s,
-      p.CdEntCru,
-      p.lbentcru,
-      r.geometry,
-      {
-        level: n,
-        status: ['', 'Vert', 'Jaune', 'Orange', 'Rouge'][n],
-        official: true,
-        coverage: 'Tronçon entier Seine à Paris',
-      },
-      { publishedAt: utc(j.DtHrInfoVigiCru) },
-    );
-  });
-  return {
-    features,
-    publishedAt: utc(j.DtHrInfoVigiCru),
-    schema:
-      'FeatureCollection DtHrInfoVigiCru ; CdEntCru, lbentcru, NivInfViCr',
-  };
-}
 export async function meteo(s, o) {
   const j = await ods(
     'data.iledefrance.fr',

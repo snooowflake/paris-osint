@@ -1,4 +1,4 @@
-import { ods, request } from './http.mjs';
+import { ods, odsMeta, request, requireFields, SourceError } from './http.mjs';
 import { utc, parisDay } from '../../src/paris/geo.mjs';
 export const plain = (v) =>
   String(v ?? '')
@@ -39,6 +39,15 @@ export function geometry(r) {
   }
   return null;
 }
+// Codes CIFS (Waze) publiés par le PC Lutèce : conservés s’ils sont bien formés.
+const code = (v) =>
+  /^[A-Z][A-Z0-9_]{1,40}$/.test(String(v ?? '')) ? String(v) : null;
+const travauxStatus = {
+  1: 'À venir',
+  2: 'En cours',
+  3: 'Suspendu',
+  4: 'Prolongé',
+};
 export async function collectParis(s, o) {
   const select =
     s.id === 'agenda'
@@ -70,11 +79,19 @@ export async function collectParis(s, o) {
           r.id,
           r.street,
           { type: 'LineString', coordinates },
-          { description: plain(r.description), type: plain(r.type) },
+          {
+            description: plain(r.description),
+            type: code(r.type),
+            subtype: code(r.subtype),
+            direction: code(r.direction),
+          },
           { publishedAt, validFrom: utc(r.starttime), validTo: utc(r.endtime) },
         );
       }
-      if (s.id === 'travaux')
+      if (s.id === 'travaux') {
+        const statut = Number(r.statut),
+          level = Number(r.niveau_perturbation);
+        if (statut === 5) return null;
         return feature(
           s,
           r.identifiant,
@@ -82,8 +99,14 @@ export async function collectParis(s, o) {
           geometry(r),
           {
             description: plain(r.description),
+            object: plain(r.objet),
             impact: plain(r.impact_circulation),
-            status: r.statut,
+            impactDetail: plain(r.impact_circulation_detail),
+            perturbationLevel: [1, 2].includes(level) ? level : null,
+            status: travauxStatus[statut] ?? null,
+            owner: plain(r.maitre_ouvrage),
+            location: plain(r.precision_localisation),
+            arrondissement: plain(r.cp_arrondissement),
           },
           {
             publishedAt,
@@ -91,15 +114,7 @@ export async function collectParis(s, o) {
             validTo: parisDay(r.date_fin, true),
           },
         );
-      if (s.id === 'belib')
-        return feature(
-          s,
-          r.id_pdc,
-          r.adresse_station,
-          geometry(r),
-          { status: plain(r.statut_pdc) },
-          { publishedAt, observedAt: utc(r.last_updated) },
-        );
+      }
       if (s.id === 'agenda')
         return feature(
           s,
@@ -125,6 +140,102 @@ export async function collectParis(s, o) {
     features,
     publishedAt,
     schema: meta.fields.map((x) => ({ name: x.name, type: x.type })),
+    license: meta.metas.default.license,
+  };
+}
+const fold = (v) =>
+  String(v ?? '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .trim();
+export const trafficStates = {
+  fluide: 'fluide',
+  'pre-sature': 'dense',
+  sature: 'sature',
+  bloque: 'bloque',
+};
+// Capteurs permanents (J-1) : la même heure que maintenant, au dernier jour publié.
+export async function collectComptages(s, o) {
+  const host = 'opendata.paris.fr',
+    meta = await odsMeta(host, s.dataset, o);
+  requireFields(meta, ['iu_ac', 'libelle', 't_1h', 'q', 'k', 'etat_trafic']);
+  const known = new Set(meta.fields.map((f) => f.name)),
+    shape = ['geo_shape', 'geom'].find((k) => known.has(k));
+  if (!shape)
+    throw new SourceError('failure', 'Géométrie des tronçons absente');
+  const latest = await request(
+    `https://${host}/api/explore/v2.1/catalog/datasets/${s.dataset}/records?` +
+      new URLSearchParams({
+        select: 't_1h',
+        order_by: 't_1h desc',
+        limit: '1',
+      }),
+    o,
+  );
+  const last = Date.parse(utc(latest.results?.[0]?.t_1h));
+  if (!Number.isFinite(last) || last > Date.now() + 12e4)
+    throw new SourceError('failure', 'Dernière heure de mesure invalide');
+  let target = Math.floor(Date.now() / 36e5) * 36e5 - 864e5;
+  for (let i = 0; i < 7 && target > last; i++) target -= 864e5;
+  if (target > last) return { features: [], schema: meta.fields };
+  const at = (t) => new Date(t).toISOString().replace('.000Z', 'Z'),
+    hour = at(target);
+  const select = [
+    'iu_ac',
+    'libelle',
+    't_1h',
+    'q',
+    'k',
+    'etat_trafic',
+    'etat_barre',
+    'libelle_nd_amont',
+    'libelle_nd_aval',
+    shape,
+  ].filter((k) => known.has(k));
+  const { rows } = await ods(
+    host,
+    s.dataset,
+    o,
+    `t_1h >= date'${hour}' and t_1h < date'${at(target + 36e5)}'`,
+    select.join(','),
+    { meta },
+  );
+  const publishedAt = utc(
+    meta.metas.default.data_processed || meta.metas.default.modified,
+  );
+  const number = (v, max) =>
+    Number.isFinite(v) && v >= 0 && v <= max ? v : null;
+  const features = rows
+    .map((r) => {
+      if (utc(r.t_1h) !== new Date(target).toISOString())
+        throw new SourceError('failure', 'Heure de mesure inattendue');
+      const state = trafficStates[fold(r.etat_trafic)] || null,
+        closed = fold(r.etat_barre) === 'barre';
+      if (!state && !closed) return null;
+      return feature(
+        s,
+        r.iu_ac,
+        r.libelle,
+        r[shape]?.geometry || r[shape],
+        {
+          trafficState: closed ? 'ferme' : state,
+          flow: number(r.q, 20000),
+          occupancy: number(r.k, 100),
+          closed,
+          from: plain(r.libelle_nd_amont),
+          to: plain(r.libelle_nd_aval),
+          method: 'Boucles électromagnétiques, agrégat horaire publié en J-1',
+        },
+        { observedAt: new Date(target).toISOString(), publishedAt },
+      );
+    })
+    .filter(Boolean);
+  return {
+    features,
+    publishedAt,
+    schema:
+      'Tronçon iu_ac, heure t_1h, débit q, taux k, etat_trafic, etat_barre, géométrie',
     license: meta.metas.default.license,
   };
 }

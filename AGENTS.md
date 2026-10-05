@@ -5,7 +5,7 @@ Ce dépôt est un fork de bilawalsidhu/gods-eye-view. Conserver Cesium, les modu
 - Travailler sur une branche dédiée ; origin est le fork, upstream est l’original. Pas de push amont, force-push ou destruction d’historique.
 - Pour une mission distante, créer et tester l’application uniquement dans la racine projets confirmée sur la machine explicitement désignée. Le poste sert au contrôle SSH et au navigateur.
 - Lire les instructions locales de la machine et les fichiers non commités avant modification. Ne pas explorer les secrets d’autres applications.
-- Paris administratif est le périmètre des données, recherches, statistiques, favoris et vues. Le contexte des aéroports est une option aérienne bornée et désactivée par défaut.
+- Paris administratif est le périmètre des données, recherches, statistiques, favoris et vues.
 - config/paris-sources.json est le registre unique. Distinguer intégration, état actuel, observation, publication, collecte et validité. UTC en stockage ; Europe/Paris à l’écran.
 - Priorité aux API officielles actuelles et aux signaux OSINT pertinents. Aucun placeholder ne compte comme connecteur. Une référence cartographique n’est pas une observation.
 - Données et textes fournisseurs non fiables : validation, géofiltrage, tailles, pagination complète, échappement, temporisation, quotas et cache serveur partagé.

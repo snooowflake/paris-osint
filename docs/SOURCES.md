@@ -6,36 +6,32 @@ Les états disponibles, vides, anciens, quota, authentification, panne et désac
 
 | Source | Intégration | Preuve réelle UTC | Couverture / motif |
 | --- | --- | --- | --- |
-| Circulation — PC Lutèce | Opérationnelle vérifiée | 2026-10-05T02:53:18.251Z | Publication annoncée toutes les cinq minutes. Événements datés, sans voitures simulées. |
-| Travaux en cours | Opérationnelle vérifiée | 2026-10-05T00:54:31.856Z | Publication hebdomadaire non exhaustive ; aucune indication de direct. |
-| Recharge Belib’ — état publié | Opérationnelle vérifiée | 2026-10-05T02:56:20.025Z | Horodatage par point. Une capacité statique n'est pas une disponibilité. |
-| Que Faire à Paris ? | Opérationnelle vérifiée | 2026-10-05T02:55:24.611Z | Périodes programmées ; ne prouve ni ouverture à cette heure ni foule. |
+| Trafic en direct — TomTom | Implémentée, clé manquante | Non testée en réel | Couleur de chaque tronçon selon la vitesse mesurée par TomTom comparée à la vitesse libre (vert fluide → rouge saturé, rouge foncé bloqué). Aucun véhicule simulé ; voies non couvertes laissées sans couleur. |
+| Trafic mesuré la veille — capteurs (J-1) | Implémentée, non testée en réel | Non testée en réel | Publication J-1 : état mesuré la veille à la même heure (fluide, pré-saturé, saturé, bloqué). Ce n’est pas du direct ; utile sans clé pour repérer les axes habituellement chargés. |
+| Fermetures et événements de voirie — PC Lutèce | Opérationnelle vérifiée | 2026-10-05T02:53:18.251Z | Publication annoncée toutes les cinq minutes : fermetures de voies, chantiers, incidents et événements diffusés par le PC Lutèce (format Waze CIFS). Événements datés, sans voitures simulées. |
+| Travaux perturbants en cours | Opérationnelle vérifiée | 2026-10-05T00:54:31.856Z | Chantiers ayant un impact sur la circulation, avec niveau de perturbation officiel. Publication hebdomadaire non exhaustive ; aucune indication de direct. |
+| Incidents de circulation — TomTom | Implémentée, clé manquante | Non testée en réel | Incident Details v5 préparé ; Flow v4 amont conservé, migration de vitesses non testée. Simulations désactivées. |
+| Métro, RER, tram et train — tracés | Opérationnelle vérifiée | 2026-10-05T01:20:25.389Z | Tracés officiels aux couleurs IDFM, pour se repérer. Référence cartographique : aucune circulation en direct ni véhicule GPS. |
+| Stations et arrêts (métro, RER, tram, bus) | Opérationnelle vérifiée | 2026-10-05T01:20:28.543Z | Référentiel officiel des arrêts. Une station sélectionnée affiche ses lignes et, si PRIM est configuré, les prochains passages publiés. |
+| IDFM — lignes desservant chaque arrêt | Implémentée, non testée en réel | Non testée en réel | Référence théorique (GTFS) : quelles lignes desservent chaque arrêt parisien. Sert aux fiches d’arrêt et au périmètre de l’info trafic ; aucune observation actuelle. |
+| Info trafic métro, RER, tram et bus — PRIM | Implémentée, clé manquante | Non testée en réel | Incidents, travaux et informations publiés par IDFM pour toutes les lignes en une requête, filtrés sur les lignes desservant Paris. Aucune position GPS de véhicule. |
+| Prochains passages en temps réel — PRIM | Implémentée, clé manquante | Non testée en réel | Horaires attendus publiés par les opérateurs, affichés dans la fiche d’une station ou d’un arrêt. Aucun suivi ni position de véhicule. |
 | Vélib’ — vélos et bornettes | Opérationnelle vérifiée | 2026-10-05T02:55:18.096Z | TTL opérateur respecté, déduplication StationCode. Repli Paris Data partagé une heure. |
 | Seine — hauteurs et débits | Opérationnelle vérifiée | 2026-10-05T02:54:18.829Z | Stations en service du référentiel Paris. H : mm convertis en m, référentiel de chaque station conservé ; inconnu si absent, sans conversion NGF. Q : L/s convertis en m³/s. Qualification et commentaire du producteur conservés. |
-| Vigicrues — Seine à Paris | Opérationnelle vérifiée | 2026-10-05T02:57:18.414Z | Niveau officiel de tout le tronçon Seine à Paris, sans alerte locale inventée. |
 | Vigilance météo — département 75 | Opérationnelle vérifiée | 2026-10-05T02:57:18.694Z | Republication ouverte du bulletin départemental J/J1 ; aucun capteur de rue ni radar. |
-| Aéronefs reçus — adsb.lol | Opérationnelle vérifiée | 2026-10-05T02:57:18.100Z | Couverture partielle. Paris strict par défaut ; contexte aéroports optatif borné, sans extension des autres couches. |
-| Passages de satellites calculés | Opérationnelle vérifiée | 2026-10-05T00:54:35.932Z | SGP4 à Paris, âge des éléments affiché. Prévision de passage, aucune observation optique ou vidéo. |
-| Sentinel-2 — acquisitions récentes | Opérationnelle vérifiée | 2026-10-05T00:54:35.708Z | Catalogue STAC des trois derniers jours : acquisition, résolution du produit, nuages de la scène. Empreinte uniquement, pas vidéo. |
-| Séismes récents dans Paris | Opérationnelle vérifiée | 2026-10-05T02:56:18.238Z | Couche secondaire : résultat vide légitime. Profondeur en kilomètres séparée de la géométrie. |
 | Airparif — prévisions communales | Implémentée, clé manquante | Non testée en réel | 20 arrondissements officiels ; prévisions aujourd’hui/demain. Une requête groupée par cycle journalier. Quota du compte à confirmer avec la clé autorisée. |
-| TomTom — incidents | Implémentée, clé manquante | Non testée en réel | Incident Details v5 préparé ; Flow v4 amont conservé, migration de vitesses non testée. Simulations désactivées. |
-| IDFM — référentiel des arrêts | Opérationnelle vérifiée | 2026-10-05T01:20:28.543Z | Référence pour localisation et jointures ; aucune observation actuelle, aucun véhicule GPS. |
-| IDFM — tracés ferroviaires | Opérationnelle vérifiée | 2026-10-05T01:20:25.389Z | Référence pour localisation et jointures ; aucune observation actuelle, aucun véhicule GPS. |
-| IDFM / PRIM — messages trafic | Implémentée, clé manquante | Non testée en réel | Connecteur compilé et testé avec réponses synthétiques identifiées. Pas de réponse réelle sans clé. Cinq lignes à 15 min représentent au plus 480 appels/jour ; aucun GPS des véhicules. |
-| Comptages routiers J-1 | Non retenue | Non testée en réel | Publié en J-1. Non retenu dans les signaux actuels demandés ; une intégration historique distincte resterait nécessaire. |
+| Que Faire à Paris ? | Opérationnelle vérifiée | 2026-10-05T02:55:24.611Z | Périodes programmées ; ne prouve ni ouverture à cette heure ni foule. |
+| Sentinel-2 — acquisitions récentes | Opérationnelle vérifiée | 2026-10-05T00:54:35.708Z | Catalogue STAC des trois derniers jours : acquisition, résolution du produit, nuages de la scène. Empreinte uniquement, pas vidéo. |
+| Passages de satellites calculés | Opérationnelle vérifiée | 2026-10-05T00:54:35.932Z | SGP4 à Paris, âge des éléments affiché. Prévision de passage, aucune observation optique ou vidéo. |
 | Comptages vélo et multimodaux | Non retenue | Non testée en réel | API officielle examinée : dernière publication du catalogue le 4 octobre 2026 à 05:15 UTC. Agrégats différés ; aucune trajectoire individuelle ni trafic instantané. |
 | Parkings SAEMES — disponibilité | Sans couverture vérifiée | Non testée en réel | Catalogue officiel testé (19 jeux). Aucun flux public de places libres vérifié dans ce catalogue. Les capacités et horaires statiques ne sont pas présentés comme une disponibilité actuelle. |
-| IRVE et stationnement — autres opérateurs | À développer | Non testée en réel | Belib’ est connecté séparément. Autres catalogues statiques non retenus comme état actuel ; disponibilités dynamiques autres opérateurs non vérifiées. |
+| IRVE et stationnement — autres opérateurs | À développer | Non testée en réel | La couche Belib’ a été retirée de la carte. Autres catalogues statiques non retenus comme état actuel ; disponibilités dynamiques autres opérateurs non vérifiées. |
 | Sytadin / DiRIF | Accès ou licence à clarifier | Non testée en réel | Réutilisation structurée soumise à accord DiRIF / Bison Futé. Aucun accord fourni, aucun prélèvement d’images du site. |
-| IDFM — prochains passages et annulations | À développer | Non testée en réel | Jeton et points d’arrêt autorisés manquants. Référentiels connectés, messages SIRI préparés séparément ; passages et horaires théoriques ne sont pas encore intégrés. |
-| TomTom — vitesses et congestion | À développer | Non testée en réel | Connecteur Flow v4 amont conservé mais non activé ni vérifié avec une clé. Les incidents v5 préparés sont une intégration distincte. Aucun véhicule simulé. |
 | Météo-France — observations, radar et pluie | À développer | Non testée en réel | Authentification et produits autorisés non fournis. Seule la vigilance départementale ouverte est actuellement connectée. Radar et foudre américains écartés. |
 | Prévisions météorologiques globales | À développer | Non testée en réel | Modèles amont conservés dans le code. Aucun modèle Paris actuel testé dans cette interface ; pas de prévision inventée ni d’appel payant. |
 | Géorisques — contexte statique | Non retenue | Non testée en réel | Risques géographiques statiques utiles en contexte, exclus des signaux actuels demandés. Aucun risque local présenté comme un incident en cours. |
 | Bruitparif | Accès ou licence à clarifier | Non testée en réel | Aucun service de mesures actuelles avec droits et granularité vérifiés pour cette installation. Cartes modélisées distinctes de capteurs. |
 | Indices polliniques officiels | À développer | Non testée en réel | Diffusion API à clé et autorisation à confirmer. Aucun formulaire soumis au nom de l’utilisateur, aucune estimation à une adresse. |
-| OpenSky — fournisseur alternatif | Accès ou licence à clarifier | Non testée en réel | adsb.lol est le fournisseur testé. OpenSky n’est pas interrogé en doublon ; droits pour usage professionnel et quotas à confirmer. |
 | 3D photoréaliste — Google / Cesium | À développer | Non testée en réel | Module amont conservé, non activé. Clé, origines autorisées, facturation et plafond non fournis. Le globe Cesium et les fonds OSM/IGN restent utilisables sans lui. |
 | NASA GIBS / HLS — imagerie supplémentaire | À développer | Non testée en réel | Acquisitions Sentinel récentes vérifiées séparément. GIBS/HLS non intégré dans cette version ; pas de vidéo en direct ni d’archive immense. |
 | AISStream — couverture de la Seine | À développer | Non testée en réel | Clé absente et couverture parisienne non testée. Aucune observation de bateau simulée, aucune couverture exhaustive annoncée. |
@@ -48,7 +44,35 @@ Les états disponibles, vides, anciens, quota, authentification, panne et désac
 | Équipements, lieux frais, APUR | Non retenue | Non testée en réel | Catalogues statiques utiles comme références ; exclus des signaux actuels. Leur présence ne prouve pas l’ouverture aujourd’hui. |
 | Webcams et caméras autorisées | Sans couverture vérifiée | Non testée en réel | Aucune webcam parisienne avec flux disponible et autorisation d’intégration vérifiés individuellement. Pas de police, RATP, ALPR, scan d’Internet ni substitution par Street View. |
 
-## Circulation — PC Lutèce
+## Trafic en direct — TomTom
+
+- Identifiant : tomtom-flow. Producteur : TomTom.
+- Source : https://developer.tomtom.com/traffic-api/documentation/traffic-flow/raster-flow-tiles. Documentation : https://developer.tomtom.com/traffic-api/documentation/traffic-flow/raster-flow-tiles.
+- Licence : Conditions TomTom selon le compte ; affichage avec attribution. Couverture : Voirie couverte par TomTom, tuiles bornées au rectangle de Paris administratif.
+- Nature : tiles. Schéma : Tuiles PNG 256 px Raster Flow v4, style relative0 : vitesse mesurée rapportée à la vitesse libre ; zoom 11 à 18..
+- Authentification : Clé serveur TomTom (TOMTOM_API_KEY).
+- Coût : Aucune dépense engagée par l’application ; dépend du compte TomTom.
+- Quota : Quota de tuiles trafic selon le compte TomTom (offre gratuite à vérifier dans la console). Plafond local partagé 7 500 tuiles/jour dont 20 % de réserve ; cache serveur 2 min.. Plafond local : 7500/jour, 20 % réservés.
+- Collecte/cache configurés : 600 / 120 secondes. Limite de fraîcheur : 1800 secondes.
+- Rétention : 0 jours. Cache mémoire de 2 min, servi au plus 10 min en cas de panne ; aucune archive..
+- Validation : Coordonnées de tuile entières, zoom 11 à 18, intersection avec Paris, signature PNG et taille maximale 1 Mo..
+- Intégration : Implémentée, clé manquante. Couleur de chaque tronçon selon la vitesse mesurée par TomTom comparée à la vitesse libre (vert fluide → rouge saturé, rouge foncé bloqué). Aucun véhicule simulé ; voies non couvertes laissées sans couleur.
+
+## Trafic mesuré la veille — capteurs (J-1)
+
+- Identifiant : comptages-route. Producteur : Ville de Paris — PC Lutèce.
+- Source : https://opendata.paris.fr/explore/dataset/comptages-routiers-permanents/. Documentation : https://opendata.paris.fr/explore/dataset/comptages-routiers-permanents/information/.
+- Licence : ODbL. Couverture : Tronçons équipés de boucles de comptage, Paris administratif.
+- Nature : measurement. Schéma : iu_ac, libelle, t_1h (heure de mesure), q débit véhicules/h, k taux d’occupation %, etat_trafic, etat_barre, libelle_nd_amont, libelle_nd_aval, geo_shape..
+- Authentification : Sans clé.
+- Coût : Accès public sans dépense engagée.
+- Quota : Quota fournisseur non précisé. Une heure de mesures par collecte horaire (environ 32 appels) ; plafond local 1 500/jour, réserve 20 %.. Plafond local : 1500/jour, 20 % réservés.
+- Collecte/cache configurés : 3600 / 3600 secondes. Limite de fraîcheur : 259200 secondes.
+- Rétention : 0 jours. Dernière heure publiée remplacée à chaque collecte ; pas d’archive locale (historique disponible chez le producteur)..
+- Validation : Heure de mesure UTC unique, états connus, débits et taux numériques, géométries WGS84 découpées sur Paris..
+- Intégration : Implémentée, non testée en réel. Publication J-1 : état mesuré la veille à la même heure (fluide, pré-saturé, saturé, bloqué). Ce n’est pas du direct ; utile sans clé pour repérer les axes habituellement chargés.
+
+## Fermetures et événements de voirie — PC Lutèce
 
 - Identifiant : pc-lutece. Producteur : Ville de Paris.
 - Source : https://opendata.paris.fr/explore/dataset/circulation_evenement/. Documentation : https://opendata.paris.fr/explore/dataset/circulation_evenement/.
@@ -60,10 +84,10 @@ Les états disponibles, vides, anciens, quota, authentification, panne et désac
 - Collecte/cache configurés : 300 / 300 secondes. Limite de fraîcheur : 1800 secondes.
 - Rétention : 14 jours. Cache courant remplacé à la collecte ; archivage borné selon licence et retentionDays. Pas de flux vidéo ni archive d’images..
 - Validation : Types, dates UTC, tailles, pagination, géométries WGS84 et périmètre contrôlés..
-- Intégration : Opérationnelle vérifiée. Publication annoncée toutes les cinq minutes. Événements datés, sans voitures simulées.
+- Intégration : Opérationnelle vérifiée. Publication annoncée toutes les cinq minutes : fermetures de voies, chantiers, incidents et événements diffusés par le PC Lutèce (format Waze CIFS). Événements datés, sans voitures simulées.
 - Preuve expurgée : [2026-10-05T02:53:18.251Z](evidence/pc-lutece.json), état lors du test : available.
 
-## Travaux en cours
+## Travaux perturbants en cours
 
 - Identifiant : travaux. Producteur : Ville de Paris.
 - Source : https://opendata.paris.fr/explore/dataset/chantiers-perturbants/. Documentation : https://opendata.paris.fr/explore/dataset/chantiers-perturbants/.
@@ -75,38 +99,94 @@ Les états disponibles, vides, anciens, quota, authentification, panne et désac
 - Collecte/cache configurés : 86400 / 86400 secondes. Limite de fraîcheur : 864000 secondes.
 - Rétention : 14 jours. Cache courant remplacé à la collecte ; archivage borné selon licence et retentionDays. Pas de flux vidéo ni archive d’images..
 - Validation : Types, dates UTC, tailles, pagination, géométries WGS84 et périmètre contrôlés..
-- Intégration : Opérationnelle vérifiée. Publication hebdomadaire non exhaustive ; aucune indication de direct.
+- Intégration : Opérationnelle vérifiée. Chantiers ayant un impact sur la circulation, avec niveau de perturbation officiel. Publication hebdomadaire non exhaustive ; aucune indication de direct.
 - Preuve expurgée : [2026-10-05T00:54:31.856Z](evidence/travaux.json), état lors du test : available.
 
-## Recharge Belib’ — état publié
+## Incidents de circulation — TomTom
 
-- Identifiant : belib. Producteur : Ville de Paris / TotalEnergies.
-- Source : https://opendata.paris.fr/explore/dataset/belib-points-de-recharge-pour-vehicules-electriques-disponibilite-temps-reel/. Documentation : https://opendata.paris.fr/explore/dataset/belib-points-de-recharge-pour-vehicules-electriques-disponibilite-temps-reel/.
-- Licence : Open Database License (ODbL). Couverture : Paris administratif.
-- Nature : measurement. Schéma : GeoJSON WGS84 ; id, observedAt, publishedAt, collectedAt, validFrom, validTo, provenance, unités et méthode..
-- Authentification : Sans clé.
-- Coût : Accès public sans dépense engagée.
-- Quota : Quota fournisseur non précisé. Plafond local partagé ; 20 % de réserve, backoff et HTTP 429 respectés.. Plafond local : 3000/jour, 20 % réservés.
-- Collecte/cache configurés : 3600 / 3600 secondes. Limite de fraîcheur : 2700 secondes.
-- Rétention : 2 jours. Cache courant remplacé à la collecte ; archivage borné selon licence et retentionDays. Pas de flux vidéo ni archive d’images..
-- Validation : Types, dates UTC, tailles, pagination, géométries WGS84 et périmètre contrôlés..
-- Intégration : Opérationnelle vérifiée. Horodatage par point. Une capacité statique n'est pas une disponibilité.
-- Preuve expurgée : [2026-10-05T02:56:20.025Z](evidence/belib.json), état lors du test : available.
-
-## Que Faire à Paris ?
-
-- Identifiant : agenda. Producteur : Ville de Paris.
-- Source : https://opendata.paris.fr/explore/dataset/que-faire-a-paris-/. Documentation : https://opendata.paris.fr/explore/dataset/que-faire-a-paris-/.
-- Licence : Open Database License (ODbL). Couverture : Paris administratif.
+- Identifiant : tomtom. Producteur : TomTom.
+- Source : https://developer.tomtom.com/traffic-api/documentation/traffic-incidents/incident-details. Documentation : https://developer.tomtom.com/traffic-api/documentation/traffic-incidents/incident-details.
+- Licence : Conditions TomTom selon abonnement. Couverture : Paris administratif.
 - Nature : event. Schéma : GeoJSON WGS84 ; id, observedAt, publishedAt, collectedAt, validFrom, validTo, provenance, unités et méthode..
+- Authentification : Secret serveur requis, jamais transmis au navigateur (TOMTOM_API_KEY).
+- Coût : Selon autorisation et abonnement ; aucun achat automatique.
+- Quota : Quota fournisseur non précisé. Plafond local partagé ; 20 % de réserve, backoff et HTTP 429 respectés.. Plafond local : 1000/jour, 20 % réservés.
+- Collecte/cache configurés : 900 / 900 secondes. Limite de fraîcheur : 1800 secondes.
+- Rétention : 0 jours. Cache courant remplacé à la collecte ; archivage borné selon licence et retentionDays. Pas de flux vidéo ni archive d’images..
+- Validation : Types, dates UTC, tailles, pagination, géométries WGS84 et périmètre contrôlés..
+- Intégration : Implémentée, clé manquante. Incident Details v5 préparé ; Flow v4 amont conservé, migration de vitesses non testée. Simulations désactivées.
+
+## Métro, RER, tram et train — tracés
+
+- Identifiant : idfm-traces. Producteur : Île-de-France Mobilités.
+- Source : https://data.iledefrance-mobilites.fr/explore/dataset/traces-du-reseau-ferre-idf/. Documentation : https://data.iledefrance-mobilites.fr/api-console/explore/v2.1/.
+- Licence : Licence Ouverte v2.0 (Etalab). Couverture : Référentiel limité à Paris, géométries tronquées.
+- Nature : reference. Schéma : GeoJSON WGS84 ; identifiants officiels, coordonnées et publication.
 - Authentification : Sans clé.
 - Coût : Accès public sans dépense engagée.
-- Quota : Quota fournisseur non précisé. Plafond local partagé ; 20 % de réserve, backoff et HTTP 429 respectés.. Plafond local : 3000/jour, 20 % réservés.
-- Collecte/cache configurés : 7200 / 7200 secondes. Limite de fraîcheur : 604800 secondes.
-- Rétention : 14 jours. Cache courant remplacé à la collecte ; archivage borné selon licence et retentionDays. Pas de flux vidéo ni archive d’images..
+- Quota : Catalogue ouvert ; plafond local partagé et marge 20 %. Plafond local : 1000/jour, 20 % réservés.
+- Collecte/cache configurés : 86400 / 86400 secondes. Limite de fraîcheur : 31536000 secondes.
+- Rétention : 0 jours. Cache courant remplacé à la collecte ; archivage borné selon licence et retentionDays. Pas de flux vidéo ni archive d’images..
 - Validation : Types, dates UTC, tailles, pagination, géométries WGS84 et périmètre contrôlés..
-- Intégration : Opérationnelle vérifiée. Périodes programmées ; ne prouve ni ouverture à cette heure ni foule.
-- Preuve expurgée : [2026-10-05T02:55:24.611Z](evidence/agenda.json), état lors du test : available.
+- Intégration : Opérationnelle vérifiée. Tracés officiels aux couleurs IDFM, pour se repérer. Référence cartographique : aucune circulation en direct ni véhicule GPS.
+- Preuve expurgée : [2026-10-05T01:20:25.389Z](evidence/idfm-traces.json), état lors du test : available.
+
+## Stations et arrêts (métro, RER, tram, bus)
+
+- Identifiant : idfm-arrets. Producteur : Île-de-France Mobilités.
+- Source : https://data.iledefrance-mobilites.fr/explore/dataset/arrets/. Documentation : https://data.iledefrance-mobilites.fr/api-console/explore/v2.1/.
+- Licence : Licence Ouverte v2.0 (Etalab). Couverture : Référentiel limité à Paris, géométries tronquées.
+- Nature : reference. Schéma : GeoJSON WGS84 ; identifiants officiels, coordonnées et publication.
+- Authentification : Sans clé.
+- Coût : Accès public sans dépense engagée.
+- Quota : Catalogue ouvert ; plafond local partagé et marge 20 %. Plafond local : 1000/jour, 20 % réservés.
+- Collecte/cache configurés : 86400 / 86400 secondes. Limite de fraîcheur : 31536000 secondes.
+- Rétention : 0 jours. Cache courant remplacé à la collecte ; archivage borné selon licence et retentionDays. Pas de flux vidéo ni archive d’images..
+- Validation : Types, dates UTC, tailles, pagination, géométries WGS84 et périmètre contrôlés..
+- Intégration : Opérationnelle vérifiée. Référentiel officiel des arrêts. Une station sélectionnée affiche ses lignes et, si PRIM est configuré, les prochains passages publiés.
+- Preuve expurgée : [2026-10-05T01:20:28.543Z](evidence/idfm-arrets.json), état lors du test : available.
+
+## IDFM — lignes desservant chaque arrêt
+
+- Identifiant : idfm-lignes. Producteur : Île-de-France Mobilités.
+- Source : https://data.iledefrance-mobilites.fr/explore/dataset/arrets-lignes/. Documentation : https://data.iledefrance-mobilites.fr/explore/dataset/arrets-lignes/information/.
+- Licence : ODbL. Couverture : Arrêts situés dans Paris administratif.
+- Nature : reference. Schéma : id (ligne IDFM:Cxxxxx), shortname, mode, route_long_name, stop_id, stop_name, coordonnées de l’arrêt..
+- Authentification : Sans clé.
+- Coût : Accès public sans dépense engagée.
+- Quota : Catalogue ouvert ; un export filtré par jour, plafond local partagé et marge 20 %. Plafond local : 1000/jour, 20 % réservés.
+- Collecte/cache configurés : 86400 / 86400 secondes. Limite de fraîcheur : 31536000 secondes.
+- Rétention : 0 jours. Référentiel remplacé chaque jour ; aucune archive..
+- Validation : Champs attendus vérifiés dans le catalogue, identifiants de ligne IDFM, coordonnées dans Paris, 30 lignes maximum par arrêt..
+- Intégration : Implémentée, non testée en réel. Référence théorique (GTFS) : quelles lignes desservent chaque arrêt parisien. Sert aux fiches d’arrêt et au périmètre de l’info trafic ; aucune observation actuelle.
+
+## Info trafic métro, RER, tram et bus — PRIM
+
+- Identifiant : prim-perturbations. Producteur : Île-de-France Mobilités.
+- Source : https://prim.iledefrance-mobilites.fr/fr/apis/idfm-disruptions_bulk. Documentation : https://prim.iledefrance-mobilites.fr/fr/aide-et-contact/documentation/prise-en-main-des-api/api-information-trafic-travaux/api-messages-info-trafic-requete-globale.
+- Licence : Licence Mobilité et CGU de l’API. Couverture : Lignes desservant Paris selon les référentiels IDFM ; tronçon décrit par le producteur.
+- Nature : event. Schéma : disruptions[] : id, applicationPeriods (begin/end AAAAMMJJTHHMMSS, heure de Paris), lastUpdate, cause, severity, title, message ; lines[] : id line:IDFM:Cxxxxx, shortName, mode, impactedObjects[].disruptionIds..
+- Authentification : Clé serveur PRIM (compte gratuit) (PRIM_API_KEY).
+- Coût : Accès gratuit avec compte PRIM ; aucune dépense engagée.
+- Quota : Requête globale : 1 000/jour pour les jetons récents, 18 000 pour les anciens, 5 req/s. Collecte toutes les 5 min = 288 appels/jour ; plafond local 1 000, réserve 20 %.. Plafond local : 1000/jour, 20 % réservés.
+- Collecte/cache configurés : 300 / 300 secondes. Limite de fraîcheur : 1800 secondes.
+- Rétention : 0 jours. Cache courant remplacé à chaque collecte ; aucune archive tant que les droits ne sont pas confirmés..
+- Validation : Identifiants de ligne IDFM, périodes converties de l’heure de Paris en UTC, messages HTML réduits au texte, lignes hors Paris écartées..
+- Intégration : Implémentée, clé manquante. Incidents, travaux et informations publiés par IDFM pour toutes les lignes en une requête, filtrés sur les lignes desservant Paris. Aucune position GPS de véhicule.
+
+## Prochains passages en temps réel — PRIM
+
+- Identifiant : prim-passages. Producteur : Île-de-France Mobilités.
+- Source : https://prim.iledefrance-mobilites.fr/fr/apis/idfm-ivtr-requete_unitaire. Documentation : https://prim.iledefrance-mobilites.fr/fr/apis/idfm-ivtr-requete_unitaire.
+- Licence : Licence Mobilité et CGU de l’API. Couverture : Arrêts du référentiel IDFM situés dans Paris.
+- Nature : on_demand. Schéma : Siri.ServiceDelivery.StopMonitoringDelivery[].MonitoredStopVisit[].MonitoredVehicleJourney : LineRef, DestinationName, MonitoredCall (ExpectedDepartureTime, AimedDepartureTime, DepartureStatus)..
+- Authentification : Clé serveur PRIM (compte gratuit) (PRIM_API_KEY).
+- Coût : Accès gratuit avec compte PRIM ; aucune dépense engagée.
+- Quota : Requête unitaire SIRI Lite selon le jeton. Appel seulement à l’ouverture d’une fiche d’arrêt parisien ; cache partagé 45 s par arrêt, plafond local 5 000/jour, réserve 20 %.. Plafond local : 5000/jour, 20 % réservés.
+- Collecte/cache configurés : 45 / 45 secondes. Limite de fraîcheur : 300 secondes.
+- Rétention : 0 jours. Cache mémoire de 45 s par arrêt ; aucune archive..
+- Validation : Arrêt présent dans le référentiel parisien, dates UTC, textes échappés, 40 passages maximum..
+- Intégration : Implémentée, clé manquante. Horaires attendus publiés par les opérateurs, affichés dans la fiche d’une station ou d’un arrêt. Aucun suivi ni position de véhicule.
 
 ## Vélib’ — vélos et bornettes
 
@@ -138,21 +218,6 @@ Les états disponibles, vides, anciens, quota, authentification, panne et désac
 - Intégration : Opérationnelle vérifiée. Stations en service du référentiel Paris. H : mm convertis en m, référentiel de chaque station conservé ; inconnu si absent, sans conversion NGF. Q : L/s convertis en m³/s. Qualification et commentaire du producteur conservés.
 - Preuve expurgée : [2026-10-05T02:54:18.829Z](evidence/hubeau.json), état lors du test : available.
 
-## Vigicrues — Seine à Paris
-
-- Identifiant : vigicrues. Producteur : SCHAPI / Vigicrues.
-- Source : https://www.vigicrues.gouv.fr/categorie/2. Documentation : https://www.vigicrues.gouv.fr/categorie/2.
-- Licence : Licence Ouverte 2.0. Couverture : Paris administratif.
-- Nature : official_alert. Schéma : GeoJSON WGS84 ; id, observedAt, publishedAt, collectedAt, validFrom, validTo, provenance, unités et méthode..
-- Authentification : Sans clé.
-- Coût : Accès public sans dépense engagée.
-- Quota : Quota fournisseur non précisé. Plafond local partagé ; 20 % de réserve, backoff et HTTP 429 respectés.. Plafond local : 3000/jour, 20 % réservés.
-- Collecte/cache configurés : 1800 / 1800 secondes. Limite de fraîcheur : 86400 secondes.
-- Rétention : 14 jours. Cache courant remplacé à la collecte ; archivage borné selon licence et retentionDays. Pas de flux vidéo ni archive d’images..
-- Validation : Types, dates UTC, tailles, pagination, géométries WGS84 et périmètre contrôlés..
-- Intégration : Opérationnelle vérifiée. Niveau officiel de tout le tronçon Seine à Paris, sans alerte locale inventée.
-- Preuve expurgée : [2026-10-05T02:57:18.414Z](evidence/vigicrues.json), état lors du test : available.
-
 ## Vigilance météo — département 75
 
 - Identifiant : meteo-vigilance. Producteur : Météo-France / Région Île-de-France.
@@ -168,35 +233,34 @@ Les états disponibles, vides, anciens, quota, authentification, panne et désac
 - Intégration : Opérationnelle vérifiée. Republication ouverte du bulletin départemental J/J1 ; aucun capteur de rue ni radar.
 - Preuve expurgée : [2026-10-05T02:57:18.694Z](evidence/meteo-vigilance.json), état lors du test : available.
 
-## Aéronefs reçus — adsb.lol
+## Airparif — prévisions communales
 
-- Identifiant : adsb. Producteur : adsb.lol.
-- Source : https://www.adsb.lol/docs/. Documentation : https://www.adsb.lol/docs/.
+- Identifiant : airparif. Producteur : Airparif.
+- Source : https://api.airparif.asso.fr/openapi.json. Documentation : https://api.airparif.asso.fr/openapi.json.
 - Licence : ODbL. Couverture : Paris administratif.
-- Nature : measurement. Schéma : GeoJSON WGS84 ; id, observedAt, publishedAt, collectedAt, validFrom, validTo, provenance, unités et méthode..
-- Authentification : Sans clé.
-- Coût : Accès public sans dépense engagée.
-- Quota : Quota fournisseur non précisé. Plafond local partagé ; 20 % de réserve, backoff et HTTP 429 respectés.. Plafond local : 2000/jour, 20 % réservés.
-- Collecte/cache configurés : 60 / 60 secondes. Limite de fraîcheur : 120 secondes.
-- Rétention : 0 jours. Cache courant remplacé à la collecte ; archivage borné selon licence et retentionDays. Pas de flux vidéo ni archive d’images..
-- Validation : Types, dates UTC, tailles, pagination, géométries WGS84 et périmètre contrôlés..
-- Intégration : Opérationnelle vérifiée. Couverture partielle. Paris strict par défaut ; contexte aéroports optatif borné, sans extension des autres couches.
-- Preuve expurgée : [2026-10-05T02:57:18.100Z](evidence/adsb.json), état lors du test : empty.
-
-## Passages de satellites calculés
-
-- Identifiant : satellites. Producteur : CelesTrak.
-- Source : https://celestrak.org/NORAD/documentation/gp-data-formats.php. Documentation : https://celestrak.org/NORAD/documentation/gp-data-formats.php.
-- Licence : Éléments orbitaux publics CelesTrak ; attribution conservée. Couverture : Paris administratif.
-- Nature : computed. Schéma : GeoJSON WGS84 ; id, observedAt, publishedAt, collectedAt, validFrom, validTo, provenance, unités et méthode..
-- Authentification : Sans clé.
-- Coût : Accès public sans dépense engagée.
+- Nature : forecast. Schéma : GeoJSON WGS84 ; id, observedAt, publishedAt, collectedAt, validFrom, validTo, provenance, unités et méthode..
+- Authentification : Secret serveur requis, jamais transmis au navigateur (AIRPARIF_API_KEY).
+- Coût : Selon autorisation et abonnement ; aucun achat automatique.
 - Quota : Quota fournisseur non précisé. Plafond local partagé ; 20 % de réserve, backoff et HTTP 429 respectés.. Plafond local : 100/jour, 20 % réservés.
-- Collecte/cache configurés : 21600 / 21600 secondes. Limite de fraîcheur : 259200 secondes.
+- Collecte/cache configurés : 86400 / 86400 secondes. Limite de fraîcheur : 86400 secondes.
 - Rétention : 0 jours. Cache courant remplacé à la collecte ; archivage borné selon licence et retentionDays. Pas de flux vidéo ni archive d’images..
 - Validation : Types, dates UTC, tailles, pagination, géométries WGS84 et périmètre contrôlés..
-- Intégration : Opérationnelle vérifiée. SGP4 à Paris, âge des éléments affiché. Prévision de passage, aucune observation optique ou vidéo.
-- Preuve expurgée : [2026-10-05T00:54:35.932Z](evidence/satellites.json), état lors du test : available.
+- Intégration : Implémentée, clé manquante. 20 arrondissements officiels ; prévisions aujourd’hui/demain. Une requête groupée par cycle journalier. Quota du compte à confirmer avec la clé autorisée.
+
+## Que Faire à Paris ?
+
+- Identifiant : agenda. Producteur : Ville de Paris.
+- Source : https://opendata.paris.fr/explore/dataset/que-faire-a-paris-/. Documentation : https://opendata.paris.fr/explore/dataset/que-faire-a-paris-/.
+- Licence : Open Database License (ODbL). Couverture : Paris administratif.
+- Nature : event. Schéma : GeoJSON WGS84 ; id, observedAt, publishedAt, collectedAt, validFrom, validTo, provenance, unités et méthode..
+- Authentification : Sans clé.
+- Coût : Accès public sans dépense engagée.
+- Quota : Quota fournisseur non précisé. Plafond local partagé ; 20 % de réserve, backoff et HTTP 429 respectés.. Plafond local : 3000/jour, 20 % réservés.
+- Collecte/cache configurés : 7200 / 7200 secondes. Limite de fraîcheur : 604800 secondes.
+- Rétention : 14 jours. Cache courant remplacé à la collecte ; archivage borné selon licence et retentionDays. Pas de flux vidéo ni archive d’images..
+- Validation : Types, dates UTC, tailles, pagination, géométries WGS84 et périmètre contrôlés..
+- Intégration : Opérationnelle vérifiée. Périodes programmées ; ne prouve ni ouverture à cette heure ni foule.
+- Preuve expurgée : [2026-10-05T02:55:24.611Z](evidence/agenda.json), état lors du test : available.
 
 ## Sentinel-2 — acquisitions récentes
 
@@ -213,106 +277,20 @@ Les états disponibles, vides, anciens, quota, authentification, panne et désac
 - Intégration : Opérationnelle vérifiée. Catalogue STAC des trois derniers jours : acquisition, résolution du produit, nuages de la scène. Empreinte uniquement, pas vidéo.
 - Preuve expurgée : [2026-10-05T00:54:35.708Z](evidence/sentinel.json), état lors du test : available.
 
-## Séismes récents dans Paris
+## Passages de satellites calculés
 
-- Identifiant : seismes. Producteur : USGS.
-- Source : https://earthquake.usgs.gov/fdsnws/event/1/. Documentation : https://earthquake.usgs.gov/fdsnws/event/1/.
-- Licence : Domaine public USGS. Couverture : Paris administratif.
-- Nature : event. Schéma : GeoJSON WGS84 ; id, observedAt, publishedAt, collectedAt, validFrom, validTo, provenance, unités et méthode..
+- Identifiant : satellites. Producteur : CelesTrak.
+- Source : https://celestrak.org/NORAD/documentation/gp-data-formats.php. Documentation : https://celestrak.org/NORAD/documentation/gp-data-formats.php.
+- Licence : Éléments orbitaux publics CelesTrak ; attribution conservée. Couverture : Paris administratif.
+- Nature : computed. Schéma : GeoJSON WGS84 ; id, observedAt, publishedAt, collectedAt, validFrom, validTo, provenance, unités et méthode..
 - Authentification : Sans clé.
 - Coût : Accès public sans dépense engagée.
-- Quota : Quota fournisseur non précisé. Plafond local partagé ; 20 % de réserve, backoff et HTTP 429 respectés.. Plafond local : 3000/jour, 20 % réservés.
-- Collecte/cache configurés : 3600 / 3600 secondes. Limite de fraîcheur : 86400 secondes.
-- Rétention : 14 jours. Cache courant remplacé à la collecte ; archivage borné selon licence et retentionDays. Pas de flux vidéo ni archive d’images..
-- Validation : Types, dates UTC, tailles, pagination, géométries WGS84 et périmètre contrôlés..
-- Intégration : Opérationnelle vérifiée. Couche secondaire : résultat vide légitime. Profondeur en kilomètres séparée de la géométrie.
-- Preuve expurgée : [2026-10-05T02:56:18.238Z](evidence/seismes.json), état lors du test : empty.
-
-## Airparif — prévisions communales
-
-- Identifiant : airparif. Producteur : Airparif.
-- Source : https://api.airparif.asso.fr/openapi.json. Documentation : https://api.airparif.asso.fr/openapi.json.
-- Licence : ODbL. Couverture : Paris administratif.
-- Nature : forecast. Schéma : GeoJSON WGS84 ; id, observedAt, publishedAt, collectedAt, validFrom, validTo, provenance, unités et méthode..
-- Authentification : Secret serveur requis, jamais transmis au navigateur (AIRPARIF_API_KEY).
-- Coût : Selon autorisation et abonnement ; aucun achat automatique.
 - Quota : Quota fournisseur non précisé. Plafond local partagé ; 20 % de réserve, backoff et HTTP 429 respectés.. Plafond local : 100/jour, 20 % réservés.
-- Collecte/cache configurés : 86400 / 86400 secondes. Limite de fraîcheur : 86400 secondes.
+- Collecte/cache configurés : 21600 / 21600 secondes. Limite de fraîcheur : 259200 secondes.
 - Rétention : 0 jours. Cache courant remplacé à la collecte ; archivage borné selon licence et retentionDays. Pas de flux vidéo ni archive d’images..
 - Validation : Types, dates UTC, tailles, pagination, géométries WGS84 et périmètre contrôlés..
-- Intégration : Implémentée, clé manquante. 20 arrondissements officiels ; prévisions aujourd’hui/demain. Une requête groupée par cycle journalier. Quota du compte à confirmer avec la clé autorisée.
-
-## TomTom — incidents
-
-- Identifiant : tomtom. Producteur : TomTom.
-- Source : https://developer.tomtom.com/traffic-api/documentation/traffic-incidents/incident-details. Documentation : https://developer.tomtom.com/traffic-api/documentation/traffic-incidents/incident-details.
-- Licence : Conditions TomTom selon abonnement. Couverture : Paris administratif.
-- Nature : event. Schéma : GeoJSON WGS84 ; id, observedAt, publishedAt, collectedAt, validFrom, validTo, provenance, unités et méthode..
-- Authentification : Secret serveur requis, jamais transmis au navigateur (TOMTOM_API_KEY).
-- Coût : Selon autorisation et abonnement ; aucun achat automatique.
-- Quota : Quota fournisseur non précisé. Plafond local partagé ; 20 % de réserve, backoff et HTTP 429 respectés.. Plafond local : 1000/jour, 20 % réservés.
-- Collecte/cache configurés : 900 / 900 secondes. Limite de fraîcheur : 1800 secondes.
-- Rétention : 0 jours. Cache courant remplacé à la collecte ; archivage borné selon licence et retentionDays. Pas de flux vidéo ni archive d’images..
-- Validation : Types, dates UTC, tailles, pagination, géométries WGS84 et périmètre contrôlés..
-- Intégration : Implémentée, clé manquante. Incident Details v5 préparé ; Flow v4 amont conservé, migration de vitesses non testée. Simulations désactivées.
-
-## IDFM — référentiel des arrêts
-
-- Identifiant : idfm-arrets. Producteur : Île-de-France Mobilités.
-- Source : https://data.iledefrance-mobilites.fr/explore/dataset/arrets/. Documentation : https://data.iledefrance-mobilites.fr/api-console/explore/v2.1/.
-- Licence : Licence Ouverte v2.0 (Etalab). Couverture : Référentiel limité à Paris, géométries tronquées.
-- Nature : reference. Schéma : GeoJSON WGS84 ; identifiants officiels, coordonnées et publication.
-- Authentification : Sans clé.
-- Coût : Accès public sans dépense engagée.
-- Quota : Catalogue ouvert ; plafond local partagé et marge 20 %. Plafond local : 1000/jour, 20 % réservés.
-- Collecte/cache configurés : 86400 / 86400 secondes. Limite de fraîcheur : 31536000 secondes.
-- Rétention : 0 jours. Cache courant remplacé à la collecte ; archivage borné selon licence et retentionDays. Pas de flux vidéo ni archive d’images..
-- Validation : Types, dates UTC, tailles, pagination, géométries WGS84 et périmètre contrôlés..
-- Intégration : Opérationnelle vérifiée. Référence pour localisation et jointures ; aucune observation actuelle, aucun véhicule GPS.
-- Preuve expurgée : [2026-10-05T01:20:28.543Z](evidence/idfm-arrets.json), état lors du test : available.
-
-## IDFM — tracés ferroviaires
-
-- Identifiant : idfm-traces. Producteur : Île-de-France Mobilités.
-- Source : https://data.iledefrance-mobilites.fr/explore/dataset/traces-du-reseau-ferre-idf/. Documentation : https://data.iledefrance-mobilites.fr/api-console/explore/v2.1/.
-- Licence : Licence Ouverte v2.0 (Etalab). Couverture : Référentiel limité à Paris, géométries tronquées.
-- Nature : reference. Schéma : GeoJSON WGS84 ; identifiants officiels, coordonnées et publication.
-- Authentification : Sans clé.
-- Coût : Accès public sans dépense engagée.
-- Quota : Catalogue ouvert ; plafond local partagé et marge 20 %. Plafond local : 1000/jour, 20 % réservés.
-- Collecte/cache configurés : 86400 / 86400 secondes. Limite de fraîcheur : 31536000 secondes.
-- Rétention : 0 jours. Cache courant remplacé à la collecte ; archivage borné selon licence et retentionDays. Pas de flux vidéo ni archive d’images..
-- Validation : Types, dates UTC, tailles, pagination, géométries WGS84 et périmètre contrôlés..
-- Intégration : Opérationnelle vérifiée. Référence pour localisation et jointures ; aucune observation actuelle, aucun véhicule GPS.
-- Preuve expurgée : [2026-10-05T01:20:25.389Z](evidence/idfm-traces.json), état lors du test : available.
-
-## IDFM / PRIM — messages trafic
-
-- Identifiant : prim-messages. Producteur : Île-de-France Mobilités.
-- Source : https://prim.iledefrance-mobilites.fr/fr/apis/idfm-ivtr-info_trafic. Documentation : https://prim.iledefrance-mobilites.fr/fr/apis/idfm-ivtr-info_trafic.
-- Licence : Licence Mobilité et CGU de l’API. Couverture : Lignes desservant Paris ; segment affecté parfois régional, sans géométrie inventée.
-- Nature : event. Schéma : SIRI ServiceDelivery/GeneralMessageDelivery ; messages, LineRef et dates UTC.
-- Authentification : Jeton serveur et 1 à 5 PRIM_LINE_IDS vérifiés dans le référentiel parisien (PRIM_API_KEY).
-- Coût : Accès selon autorisation PRIM ; aucune dépense engagée.
-- Quota : Documentation : 1 000/jour pour certains nouveaux jetons, 20 000 pour anciens jetons. Vérifier le quota réellement attribué avant activation. Plafond local 1 000, réserve 20 %.. Plafond local : 1000/jour, 20 % réservés.
-- Collecte/cache configurés : 900 / 900 secondes. Limite de fraîcheur : 7200 secondes.
-- Rétention : 0 jours. Cache courant, aucun archivage avant confirmation des droits associés au jeton.
-- Validation : Dates explicites, 5 lignes maximum, jointure au référentiel de Paris et taille HTTP limitée.
-- Intégration : Implémentée, clé manquante. Connecteur compilé et testé avec réponses synthétiques identifiées. Pas de réponse réelle sans clé. Cinq lignes à 15 min représentent au plus 480 appels/jour ; aucun GPS des véhicules.
-
-## Comptages routiers J-1
-
-- Identifiant : comptages-route. Producteur : Ville de Paris.
-- Source : https://opendata.paris.fr/explore/dataset/comptages-routiers-permanents/. Documentation : https://opendata.paris.fr/explore/dataset/comptages-routiers-permanents/.
-- Licence : ODbL. Couverture : Couverture Paris actuelle non validée.
-- Nature : candidate. Schéma : Non implémenté ; schéma fournisseur non validé.
-- Authentification : Aucune collecte configurée ; voir motif.
-- Coût : Aucune dépense engagée.
-- Quota : Aucun appel planifié. Plafond local : 0/jour, 20 % réservés.
-- Collecte/cache configurés : 0 / 0 secondes. Limite de fraîcheur : 0 secondes.
-- Rétention : 0 jours. Aucune donnée collectée ou retenue.
-- Validation : Non testée.
-- Intégration : Non retenue. Publié en J-1. Non retenu dans les signaux actuels demandés ; une intégration historique distincte resterait nécessaire.
+- Intégration : Opérationnelle vérifiée. SGP4 à Paris, âge des éléments affiché. Prévision de passage, aucune observation optique ou vidéo.
+- Preuve expurgée : [2026-10-05T00:54:35.932Z](evidence/satellites.json), état lors du test : available.
 
 ## Comptages vélo et multimodaux
 
@@ -354,7 +332,7 @@ Les états disponibles, vides, anciens, quota, authentification, panne et désac
 - Collecte/cache configurés : 0 / 0 secondes. Limite de fraîcheur : 0 secondes.
 - Rétention : 0 jours. Aucune donnée collectée ou retenue.
 - Validation : Non testée.
-- Intégration : À développer. Belib’ est connecté séparément. Autres catalogues statiques non retenus comme état actuel ; disponibilités dynamiques autres opérateurs non vérifiées.
+- Intégration : À développer. La couche Belib’ a été retirée de la carte. Autres catalogues statiques non retenus comme état actuel ; disponibilités dynamiques autres opérateurs non vérifiées.
 
 ## Sytadin / DiRIF
 
@@ -369,34 +347,6 @@ Les états disponibles, vides, anciens, quota, authentification, panne et désac
 - Rétention : 0 jours. Aucune donnée collectée ou retenue.
 - Validation : Non testée.
 - Intégration : Accès ou licence à clarifier. Réutilisation structurée soumise à accord DiRIF / Bison Futé. Aucun accord fourni, aucun prélèvement d’images du site.
-
-## IDFM — prochains passages et annulations
-
-- Identifiant : prim-passages. Producteur : Île-de-France Mobilités.
-- Source : https://prim.iledefrance-mobilites.fr/fr/apis. Documentation : https://prim.iledefrance-mobilites.fr/fr/apis.
-- Licence : Licence Mobilité. Couverture : Couverture Paris actuelle non validée.
-- Nature : candidate. Schéma : Non implémenté ; schéma fournisseur non validé.
-- Authentification : Aucune collecte configurée ; voir motif.
-- Coût : Aucune dépense engagée.
-- Quota : Aucun appel planifié. Plafond local : 0/jour, 20 % réservés.
-- Collecte/cache configurés : 0 / 0 secondes. Limite de fraîcheur : 0 secondes.
-- Rétention : 0 jours. Aucune donnée collectée ou retenue.
-- Validation : Non testée.
-- Intégration : À développer. Jeton et points d’arrêt autorisés manquants. Référentiels connectés, messages SIRI préparés séparément ; passages et horaires théoriques ne sont pas encore intégrés.
-
-## TomTom — vitesses et congestion
-
-- Identifiant : tomtom-flow. Producteur : TomTom.
-- Source : https://developer.tomtom.com/traffic-api/documentation/traffic-flow/flow-segment-data. Documentation : https://developer.tomtom.com/traffic-api/documentation/traffic-flow/flow-segment-data.
-- Licence : Conditions de l’abonnement. Couverture : Couverture Paris actuelle non validée.
-- Nature : candidate. Schéma : Non implémenté ; schéma fournisseur non validé.
-- Authentification : Aucune collecte configurée ; voir motif.
-- Coût : Aucune dépense engagée.
-- Quota : Aucun appel planifié. Plafond local : 0/jour, 20 % réservés.
-- Collecte/cache configurés : 0 / 0 secondes. Limite de fraîcheur : 0 secondes.
-- Rétention : 0 jours. Aucune donnée collectée ou retenue.
-- Validation : Non testée.
-- Intégration : À développer. Connecteur Flow v4 amont conservé mais non activé ni vérifié avec une clé. Les incidents v5 préparés sont une intégration distincte. Aucun véhicule simulé.
 
 ## Météo-France — observations, radar et pluie
 
@@ -467,20 +417,6 @@ Les états disponibles, vides, anciens, quota, authentification, panne et désac
 - Rétention : 0 jours. Aucune donnée collectée ou retenue.
 - Validation : Non testée.
 - Intégration : À développer. Diffusion API à clé et autorisation à confirmer. Aucun formulaire soumis au nom de l’utilisateur, aucune estimation à une adresse.
-
-## OpenSky — fournisseur alternatif
-
-- Identifiant : opensky. Producteur : OpenSky Network.
-- Source : https://openskynetwork.github.io/opensky-api/rest.html. Documentation : https://openskynetwork.github.io/opensky-api/rest.html.
-- Licence : Conditions OpenSky ; accord professionnel éventuellement requis. Couverture : Couverture Paris actuelle non validée.
-- Nature : candidate. Schéma : Non implémenté ; schéma fournisseur non validé.
-- Authentification : Aucune collecte configurée ; voir motif.
-- Coût : Aucune dépense engagée.
-- Quota : Aucun appel planifié. Plafond local : 0/jour, 20 % réservés.
-- Collecte/cache configurés : 0 / 0 secondes. Limite de fraîcheur : 0 secondes.
-- Rétention : 0 jours. Aucune donnée collectée ou retenue.
-- Validation : Non testée.
-- Intégration : Accès ou licence à clarifier. adsb.lol est le fournisseur testé. OpenSky n’est pas interrogé en doublon ; droits pour usage professionnel et quotas à confirmer.
 
 ## 3D photoréaliste — Google / Cesium
 

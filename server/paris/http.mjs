@@ -15,17 +15,15 @@ const allowed = {
     /^\/opendata\/Velib_Metropole\/(station_information|station_status|system_information|gbfs)\.json$/,
   'hubeau.eaufrance.fr':
     /^\/api\/v2\/hydrometrie\/(referentiel\/stations|observations_tr)$/,
-  'www.vigicrues.gouv.fr': /^\/services\/InfoVigiCru\.geojson$/,
-  'api.adsb.lol': /^\/v2\/point\/48\.86\/2\.35\/23$/,
   'celestrak.org': /^\/NORAD\/elements\/gp\.php$/,
-  'earthquake.usgs.gov': /^\/fdsnws\/event\/1\/query$/,
   'stac.dataspace.copernicus.eu':
     /^\/v1\/(search|collections\/sentinel-2-l2a)$/,
   'data.geopf.fr': /^\/geocodage\/search$/,
   'api.airparif.fr': /^\/indices\/prevision\/commune$/,
-  'api.tomtom.com': /^\/traffic\/services\/5\/incidentDetails$/,
+  'api.tomtom.com':
+    /^\/traffic\/(services\/5\/incidentDetails|map\/4\/tile\/flow\/relative0\/\d{1,2}\/\d{1,6}\/\d{1,6}\.png)$/,
   'prim.iledefrance-mobilites.fr':
-    /^\/marketplace\/(general-message|stop-monitoring)$/,
+    /^\/marketplace\/(disruptions_bulk\/disruptions\/v2|stop-monitoring)$/,
   'public-api.meteofrance.fr':
     /^\/public\/DPVigilance\/v1\/cartevigilance\/encours$/,
 };
@@ -54,6 +52,7 @@ export async function request(
     fetcher = fetch,
     limit = 12e6,
     text = false,
+    binary = false,
     signal,
   } = {},
 ) {
@@ -64,8 +63,8 @@ export async function request(
   const r = await fetcher(u, {
     headers: {
       'User-Agent':
-        'Paris-OSINT/0.3.0 (https://github.com/snooowflake/paris-osint)',
-      Accept: 'application/json',
+        'Paris-OSINT/0.4.0 (https://github.com/snooowflake/paris-osint)',
+      Accept: binary ? 'image/png' : 'application/json',
       ...headers,
     },
     redirect: 'error',
@@ -100,7 +99,9 @@ export async function request(
     await reader.cancel().catch(() => {});
     throw e;
   }
-  const body = Buffer.concat(chunks).toString('utf8');
+  const raw = Buffer.concat(chunks);
+  if (binary) return raw;
+  const body = raw.toString('utf8');
   if (text) return body;
   try {
     return JSON.parse(body);
@@ -108,21 +109,32 @@ export async function request(
     throw new SourceError('failure', 'JSON invalide');
   }
 }
+export async function odsMeta(host, dataset, options = {}) {
+  const meta = await request(
+    `https://${host}/api/explore/v2.1/catalog/datasets/${dataset}`,
+    options,
+  );
+  if (!Array.isArray(meta.fields) || !meta.metas?.default)
+    throw new SourceError('failure', 'Schéma du catalogue invalide');
+  return meta;
+}
 export async function ods(
   host,
   dataset,
   options = {},
   where = '',
   select = '',
+  { pageSize = 100, meta } = {},
 ) {
   const base = `https://${host}/api/explore/v2.1/catalog/datasets/${dataset}`;
-  const meta = await request(base, options);
-  if (!meta.fields || !meta.metas?.default)
-    throw new SourceError('failure', 'Schéma du catalogue invalide');
+  meta ??= await odsMeta(host, dataset, options);
   const rows = [];
   let total;
-  for (let offset = 0; offset < 10000; offset += 100) {
-    const q = new URLSearchParams({ limit: '100', offset: String(offset) });
+  for (let offset = 0; offset < 10000; offset += pageSize) {
+    const q = new URLSearchParams({
+      limit: String(pageSize),
+      offset: String(offset),
+    });
     if (where) q.set('where', where);
     if (select) q.set('select', select);
     const j = await request(base + '/records?' + q, options);
@@ -140,10 +152,39 @@ export async function ods(
     total = j.total_count;
     rows.push(...j.results);
     if (rows.length >= total) break;
-    if (j.results.length !== 100)
+    if (j.results.length !== pageSize)
       throw new SourceError('failure', 'Page tronquée');
   }
   if (rows.length !== total)
     throw new SourceError('failure', 'Pagination incomplète');
   return { rows, meta };
+}
+// Export complet filtré, pour les référentiels dépassant 10 000 lignes paginées.
+export async function odsExport(host, dataset, options, where, select, max) {
+  const q = new URLSearchParams({ where, select });
+  const rows = await request(
+    `https://${host}/api/explore/v2.1/catalog/datasets/${dataset}/exports/json?` +
+      q,
+    options,
+  );
+  if (!Array.isArray(rows) || rows.length > max)
+    throw new SourceError('failure', 'Export hors limites');
+  return rows;
+}
+// Premier champ du catalogue ayant l’un des types demandés.
+export function odsField(meta, types) {
+  return (
+    meta.fields.find(
+      (f) => types.includes(f.type) && /^[a-z0-9_]{1,64}$/.test(f.name),
+    )?.name || null
+  );
+}
+export function requireFields(meta, names) {
+  const known = new Set(meta.fields.map((f) => f.name));
+  const missing = names.filter((n) => !known.has(n));
+  if (missing.length)
+    throw new SourceError(
+      'failure',
+      'Schéma fournisseur inattendu : ' + missing.join(', ') + ' absent',
+    );
 }

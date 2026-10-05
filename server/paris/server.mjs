@@ -68,7 +68,8 @@ export function createApplicationServer({
   const secure = origin.protocol === 'https:',
     cookie = (t) => makeCookie(t, secure),
     loginLimit = new Limiter(),
-    requestLimit = new Limiter();
+    requestLimit = new Limiter(),
+    tileLimit = new Limiter();
   const listener = async (req, res) => {
     const json = (status, value) => {
       res.writeHead(status, {
@@ -114,7 +115,7 @@ export function createApplicationServer({
       if (url.pathname === '/healthz')
         return json(200, {
           ok: true,
-          version: '0.3.0',
+          version: '0.4.0',
           revision: deployedRevision(),
         });
       if (url.pathname === '/api/login' && req.method === 'POST') {
@@ -140,18 +141,37 @@ export function createApplicationServer({
       const user = session(store, req);
       if (url.pathname.startsWith('/api/')) {
         if (!user) return json(401, { error: 'Connexion requise' });
-        if (!requestLimit.allow(user.login, 240))
+        // Les tuiles de trafic arrivent par rafales lors d’un zoom : limite dédiée.
+        if (
+          url.pathname.startsWith('/api/traffic-tiles/')
+            ? !tileLimit.allow(user.login, 1500)
+            : !requestLimit.allow(user.login, 240)
+        )
           return json(429, { error: 'Limite locale atteinte' });
         if (
           !['GET', 'HEAD'].includes(req.method) &&
           !csrfOk(req, user, config.origin)
         )
           return json(403, { error: 'CSRF invalide' });
-        if (url.pathname === '/api/search')
-          return json(200, {
-            type: 'FeatureCollection',
-            features: await search(url.searchParams.get('q'), store, boundary),
-          });
+        if (url.pathname === '/api/search') {
+          try {
+            return json(200, {
+              type: 'FeatureCollection',
+              features: await search(
+                url.searchParams.get('q'),
+                store,
+                boundary,
+              ),
+            });
+          } catch (e) {
+            const invalid = e.message.startsWith('Recherche de'),
+              paced = e.message.startsWith('Recherche partagée');
+            return json(invalid ? 400 : paced ? 429 : 502, {
+              error:
+                invalid || paced ? e.message : 'Géocodage IGN indisponible',
+            });
+          }
+        }
         return await routes({
           req,
           res,
@@ -246,7 +266,7 @@ if (
     console.log(
       JSON.stringify({
         event: 'started',
-        version: '0.3.0',
+        version: '0.4.0',
         revision: deployedRevision(),
       }),
     );

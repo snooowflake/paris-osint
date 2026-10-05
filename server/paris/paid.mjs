@@ -1,4 +1,4 @@
-import { request } from './http.mjs';
+import { request, SourceError } from './http.mjs';
 import { feature, plain } from './paris-data.mjs';
 import { utc, parisDay } from '../../src/paris/geo.mjs';
 export async function airparif(s, o, arrondissements, env) {
@@ -91,4 +91,96 @@ export async function tomtom(s, o, env) {
     schema:
       'Incident Details v5 ; geometry, id, startTime/endTime/lastReportTime ; demande present',
   };
+}
+
+// Tuiles Raster Flow v4 : clé serveur, chemin fixe, zooms et emprise bornés à Paris.
+export const parisBox = [2.224, 48.815, 2.47, 48.904];
+export const flowZoom = { min: 11, max: 18 };
+const tileLat = (y, n) =>
+  (Math.atan(Math.sinh(Math.PI * (1 - (2 * y) / n))) * 180) / Math.PI;
+export function tileInParis(z, x, y) {
+  if (
+    ![z, x, y].every(Number.isInteger) ||
+    z < flowZoom.min ||
+    z > flowZoom.max
+  )
+    return false;
+  const n = 2 ** z;
+  if (x < 0 || y < 0 || x >= n || y >= n) return false;
+  const west = (x / n) * 360 - 180,
+    east = ((x + 1) / n) * 360 - 180;
+  return (
+    east >= parisBox[0] &&
+    west <= parisBox[2] &&
+    tileLat(y, n) >= parisBox[1] &&
+    tileLat(y + 1, n) <= parisBox[3]
+  );
+}
+export function lonLatTile(lon, lat, z) {
+  const n = 2 ** z,
+    r = (lat * Math.PI) / 180;
+  return {
+    x: Math.floor(((lon + 180) / 360) * n),
+    y: Math.floor(((1 - Math.asinh(Math.tan(r)) / Math.PI) / 2) * n),
+  };
+}
+const flowUrl = (z, x, y, key) =>
+  `https://api.tomtom.com/traffic/map/4/tile/flow/relative0/${z}/${x}/${y}.png?` +
+  new URLSearchParams({ key, tileSize: '256' });
+const PNG = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
+export const isPng = (b) =>
+  Buffer.isBuffer(b) && b.length > 8 && b.subarray(0, 8).equals(PNG);
+// Collecte de contrôle : une tuile du centre de Paris atteste clé, quota et format.
+export async function tomtomFlowProbe(s, o, env) {
+  const { x, y } = lonLatTile(2.3522, 48.8566, 13);
+  const buf = await request(flowUrl(13, x, y, env.TOMTOM_API_KEY), {
+    ...o,
+    binary: true,
+    limit: 1e6,
+  });
+  if (!isPng(buf)) throw new SourceError('failure', 'Tuile TomTom invalide');
+  return { features: [], schema: s.schema };
+}
+export class FlowTiles {
+  constructor(store, env, source, fetcher = fetch) {
+    Object.assign(this, { store, env, source, fetcher });
+    this.cache = new Map();
+    this.pending = new Map();
+    this.max = 1500;
+  }
+  async get(z, x, y, now = Date.now()) {
+    if (!this.source?.enabled || !this.env.TOMTOM_API_KEY)
+      throw new SourceError('disabled', 'Clé TomTom non configurée');
+    if (!tileInParis(z, x, y))
+      throw new SourceError('failure', 'Tuile hors de Paris');
+    const k = z + '/' + x + '/' + y,
+      hit = this.cache.get(k);
+    if (hit && now - hit.at < this.source.cacheSeconds * 1000) return hit;
+    if (this.pending.has(k)) return this.pending.get(k);
+    const p = request(flowUrl(z, x, y, this.env.TOMTOM_API_KEY), {
+      store: this.store,
+      fetcher: this.fetcher,
+      provider: this.source.provider,
+      budget: this.source.dailyBudget,
+      binary: true,
+      limit: 1e6,
+    })
+      .then((buf) => {
+        if (!isPng(buf))
+          throw new SourceError('failure', 'Tuile TomTom invalide');
+        const entry = { at: Date.now(), buf };
+        this.cache.delete(k);
+        this.cache.set(k, entry);
+        while (this.cache.size > this.max)
+          this.cache.delete(this.cache.keys().next().value);
+        return entry;
+      })
+      .catch((e) => {
+        if (hit && Date.now() - hit.at < 600000) return hit;
+        throw e;
+      })
+      .finally(() => this.pending.delete(k));
+    this.pending.set(k, p);
+    return p;
+  }
 }

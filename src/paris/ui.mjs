@@ -28,6 +28,34 @@ export const fmt = (x) =>
   x && Number.isFinite(Date.parse(x))
     ? formatter.format(new Date(x))
     : 'inconnu';
+const hourFormatter = new Intl.DateTimeFormat('fr-FR', {
+  timeZone: 'Europe/Paris',
+  hour: '2-digit',
+  minute: '2-digit',
+});
+export const hm = (x) =>
+  x && Number.isFinite(Date.parse(x)) ? hourFormatter.format(new Date(x)) : '';
+// Ancienneté lisible d’un horodatage (« il y a 4 min »).
+export function ago(x, now = Date.now()) {
+  const t = Date.parse(x);
+  if (!Number.isFinite(t)) return 'date inconnue';
+  const m = Math.round((now - t) / 60000);
+  if (m < 1) return 'à l’instant';
+  if (m < 60) return 'il y a ' + m + ' min';
+  const h = Math.round(m / 60);
+  if (h < 48) return 'il y a ' + h + ' h';
+  return 'le ' + fmt(x);
+}
+// Pastille de ligne aux couleurs officielles (métro rond, autres modes carrés).
+export function chip(line, { status } = {}) {
+  const n = el('span', line?.name || '?', {
+    class: 'line-chip mode-' + (line?.mode || 'other'),
+  });
+  n.style.setProperty('--c', line?.color || '#5A6872');
+  n.style.setProperty('--t', line?.text || '#FFFFFF');
+  if (status) n.dataset.status = String(status);
+  return n;
+}
 export const link = (text, url) => {
   try {
     const u = new URL(url);
@@ -98,6 +126,7 @@ export const stateLabel = {
   auth_error: 'Erreur d’authentification',
   failure: 'Panne ou schéma invalide',
   disabled: 'Désactivée',
+  on_demand: 'À la demande',
 };
 export const integrationLabel = {
   verified: 'Opérationnelle vérifiée',

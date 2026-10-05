@@ -1,13 +1,13 @@
 import { randomUUID } from 'node:crypto';
 import fs from 'node:fs';
 import { clip, dedup, current, validGeometry } from '../../src/paris/geo.mjs';
-import { collectParis, collectVelib } from './paris-data.mjs';
-import { hydro, vigilance, meteo } from './environment.mjs';
-import { aircraft, satellites, sentinel, seismes } from './extensions.mjs';
-import { reference } from './references.mjs';
-import { airparif, tomtom } from './paid.mjs';
+import { collectComptages, collectParis, collectVelib } from './paris-data.mjs';
+import { hydro, meteo } from './environment.mjs';
+import { satellites, sentinel } from './extensions.mjs';
+import { lignes, reference } from './references.mjs';
+import { airparif, tomtom, tomtomFlowProbe, FlowTiles } from './paid.mjs';
 import { SourceError } from './http.mjs';
-import { prim } from './prim.mjs';
+import { Departures, primDisruptions } from './prim.mjs';
 export const registry = JSON.parse(
   fs.readFileSync(
     new URL('../../config/paris-sources.json', import.meta.url),
@@ -38,37 +38,41 @@ export class Collector {
     this.owners = new Map();
     this.shutdown = new AbortController();
     this.adapters = {
-      prim: (s, o) => prim(s, o, env),
+      'prim-perturbations': (s, o) => primDisruptions(s, o, env),
       paris: collectParis,
+      comptages: collectComptages,
       velib: collectVelib,
       hydro: (s, o) => hydro(s, o, boundary),
-      vigicrues: vigilance,
       meteo,
-      adsb: aircraft,
       satellites,
       sentinel,
-      seismes,
       reference,
+      'idfm-lignes': lignes,
       airparif: (s, o) => airparif(s, o, arrondissements, env),
       tomtom: (s, o) => tomtom(s, o, env),
+      'tomtom-flow': (s, o) => tomtomFlowProbe(s, o, env),
       ...adapters,
     };
+    const find = (id) => registry.find((s) => s.id === id);
+    this.flowTiles = new FlowTiles(store, env, find('tomtom-flow'), fetcher);
+    this.departures = new Departures(
+      store,
+      env,
+      find('prim-passages'),
+      fetcher,
+    );
   }
   configured(s) {
     return !s.auth || !!this.env[s.auth];
   }
-  features(s, airportContext = false) {
+  features(s) {
     const snap = this.store.get('source:' + s.id);
     if (!snap || snap.errorState) return [];
     return snap.features
       .filter((f) => current(f, s))
       .map((f) => {
         if (!f.geometry) return f;
-        const geometry = clip(
-          f.geometry,
-          boundary,
-          airportContext && s.id === 'adsb',
-        );
+        const geometry = clip(f.geometry, boundary);
         return geometry ? { ...f, geometry } : null;
       })
       .filter(Boolean);
@@ -76,8 +80,13 @@ export class Collector {
   status(s) {
     const snap = this.store.get('source:' + s.id),
       a = this.features(s),
-      freshContext = s.id === 'adsb' && this.features(s, true).length > 0,
-      old = snap?.features.length > 0 && !a.length && !freshContext;
+      tiles = s.nature === 'tiles',
+      fresh =
+        !!snap?.lastSuccess &&
+        Date.now() - Date.parse(snap.lastSuccess) < s.staleAfter * 1000,
+      old = tiles
+        ? !!snap?.lastSuccess && !fresh
+        : snap?.features.length > 0 && !a.length;
     return {
       ...s,
       integration: snap?.lastSuccess
@@ -92,14 +101,21 @@ export class Collector {
         : !this.configured(s)
           ? 'disabled'
           : snap?.errorState ||
-            (!snap
-              ? 'disabled'
-              : old
-                ? 'stale'
-                : a.length
-                  ? 'available'
-                  : 'empty'),
-      count: !snap || snap.errorState || old ? null : a.length,
+            (s.onDemand
+              ? snap?.lastSuccess
+                ? 'available'
+                : 'on_demand'
+              : !snap
+                ? 'disabled'
+                : old
+                  ? 'stale'
+                  : a.length || tiles
+                    ? 'available'
+                    : 'empty'),
+      count:
+        !snap || snap.errorState || old || tiles || s.onDemand
+          ? null
+          : a.length,
       collectedAt: snap?.collectedAt || null,
       lastSuccess: snap?.lastSuccess || null,
       error: snap?.error || null,
@@ -160,7 +176,7 @@ export class Collector {
               return f;
             }
             if (!validGeometry(f.geometry)) throw Error('Geometry invalid');
-            const g = clip(f.geometry, boundary, s.id === 'adsb');
+            const g = clip(f.geometry, boundary);
             if (!g) {
               outside++;
               return null;
@@ -181,7 +197,7 @@ export class Collector {
         missingGeometry,
         schema: r.schema || s.schema,
         sample: features.slice(0, 2).map((f) => ({
-          id: s.id === 'adsb' ? 'redacted' : f.id,
+          id: f.id,
           geometryType: f.geometry?.type || null,
           observedAt: f.properties.observedAt,
           publishedAt: f.properties.publishedAt,

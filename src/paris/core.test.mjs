@@ -46,10 +46,10 @@ const response = (j) =>
   new Response(JSON.stringify(j), {
     headers: { 'content-type': 'application/json' },
   });
-test('Paris officiel inclut ses bois, exclut les aéroports du périmètre standard', () => {
+test('Paris officiel inclut ses bois et exclut les aéroports', () => {
   assert(contains([2.3522, 48.8566], boundary));
+  assert(contains([2.25, 48.865], boundary));
   assert(!contains([2.55, 49.01], boundary));
-  assert(clip({ type: 'Point', coordinates: [2.55, 49.01] }, boundary, true));
   assert(!clip({ type: 'Point', coordinates: [2.55, 49.01] }, boundary));
 });
 test('Trous et lignes sont réellement découpés', () => {
@@ -218,29 +218,35 @@ test('Erreurs d’authentification, quotas, JSON et taille détectés ; redirect
     [429, 'quota'],
   ])
     await assert.rejects(
-      request('https://api.adsb.lol/v2/point/48.86/2.35/23', {
-        fetcher: async () => new Response('', { status }),
-      }),
+      request(
+        'https://hubeau.eaufrance.fr/api/v2/hydrometrie/observations_tr',
+        {
+          fetcher: async () => new Response('', { status }),
+        },
+      ),
       (e) => e.state === state,
     );
   await assert.rejects(
-    request('https://api.adsb.lol/v2/point/48.86/2.35/23', {
+    request('https://hubeau.eaufrance.fr/api/v2/hydrometrie/observations_tr', {
       fetcher: async () => new Response('bad'),
     }),
   );
   await assert.rejects(
-    request('https://api.adsb.lol/v2/point/48.86/2.35/23', {
+    request('https://hubeau.eaufrance.fr/api/v2/hydrometrie/observations_tr', {
       limit: 2,
       fetcher: async () => response({ big: true }),
     }),
   );
-  await request('https://api.adsb.lol/v2/point/48.86/2.35/23', {
-    fetcher: async (u, init) => {
-      assert.equal(init.redirect, 'error');
-      assert(init.signal);
-      return response({});
+  await request(
+    'https://hubeau.eaufrance.fr/api/v2/hydrometrie/observations_tr',
+    {
+      fetcher: async (u, init) => {
+        assert.equal(init.redirect, 'error');
+        assert(init.signal);
+        return response({});
+      },
     },
-  });
+  );
 });
 test('Source sans clé ne fait aucun appel', async () => {
   const store = new Store(':memory:');

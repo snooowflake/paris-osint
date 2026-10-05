@@ -1,4 +1,5 @@
 import { appendNumericHistory } from './history.mjs';
+import { basemaps } from './map.mjs';
 import {
   $,
   el,
@@ -48,7 +49,7 @@ export async function page(name, app, focus) {
           s.nature === 'reference'
             ? 'Références parisiennes'
             : 'Données actuelles Paris',
-          s.count,
+          s.nature === 'tiles' || s.onDemand ? 'non applicable' : s.count,
         ),
         field('Couverture', s.coverage),
         field('Producteur', s.producer),
@@ -62,14 +63,18 @@ export async function page(name, app, focus) {
             dated_image: 'Acquisitions datées',
             reference: 'Référentiel',
             forecast: 'Prévisions',
+            tiles: 'Tuiles de trafic en direct',
+            on_demand: 'Consultation à la demande',
           }[s.nature] || s.nature,
         ),
         field('Dernière collecte', fmt(s.collectedAt)),
         field(
-          'Fréquence',
+          s.onDemand ? 'Cache par arrêt' : 'Fréquence',
           s.refreshSeconds >= 3600
             ? s.refreshSeconds / 3600 + ' h'
-            : s.refreshSeconds / 60 + ' min',
+            : s.refreshSeconds >= 60
+              ? s.refreshSeconds / 60 + ' min'
+              : s.refreshSeconds + ' s',
         ),
         field('Licence', s.license),
       );
@@ -143,7 +148,8 @@ export async function page(name, app, focus) {
       ),
     );
     for (const s of app.sources.filter(
-      (s) => s.enabled && s.nature !== 'reference',
+      (s) =>
+        s.enabled && !['reference', 'tiles', 'on_demand'].includes(s.nature),
     )) {
       const card = el('article', null, { class: 'card' });
       card.append(
@@ -160,7 +166,7 @@ export async function page(name, app, focus) {
         ),
       );
       if (['available', 'empty'].includes(s.state)) {
-        await app.load(s.id, false);
+        await app.load(s.id);
         let rows = app.data.get(s.id) || [];
         if (s.nature === 'official_alert')
           rows = [...rows].sort(
@@ -171,11 +177,13 @@ export async function page(name, app, focus) {
           card.append(
             button(
               (p.status ? p.status + ' · ' : '') +
+                (p.lineName ? 'Ligne ' + p.lineName + ' · ' : '') +
                 p.name +
                 (p.value !== undefined ? ' · ' + p.value + ' ' + p.unit : ''),
               () => {
                 app.navigate('map');
-                app.select(f);
+                if (p.lineRef && !f.geometry) app.showLine(p.lineRef);
+                else app.select(f);
               },
             ),
           );
@@ -366,32 +374,11 @@ export async function page(name, app, focus) {
     const c = el('article', null, { class: 'card' });
     c.append(el('h2', 'Fond cartographique'));
     const maps = el('select', null, { 'aria-label': 'Fond cartographique' });
-    for (const [id, label] of [
-      ['osm', 'OpenStreetMap'],
-      ['ign', 'IGN — Plan'],
-      ['ortho', 'IGN — Orthophotographie (fond de référence)'],
-    ])
-      maps.append(el('option', label, { value: id }));
+    for (const [id, b] of Object.entries(basemaps))
+      maps.append(el('option', b.label + ' — ' + b.hint, { value: id }));
     maps.value = app.mapSource;
     maps.addEventListener('change', () => app.setBasemap(maps.value));
     c.append(maps);
-    const check = el('input', null, { type: 'checkbox' });
-    check.checked = app.preferences.airportContext;
-    const label = el('label', 'Contexte des aéroports parisiens');
-    label.prepend(check);
-    check.addEventListener('change', async () => {
-      app.preferences.airportContext = check.checked;
-      await app.savePreferences();
-      await app.load('adsb', true);
-    });
-    c.append(
-      label,
-      el(
-        'p',
-        'Option désactivée par défaut. Périmètre aérien borné pour CDG, Orly et Le Bourget ; toutes les autres couches restent dans Paris.',
-        { class: 'source-description' },
-      ),
-    );
     const advanced = el('details');
     advanced.append(el('summary', 'Options avancées'));
     const effect = el('select', null, { 'aria-label': 'Effet graphique' });
